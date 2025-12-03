@@ -11,7 +11,24 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+// CORS configuration - allow frontend URL
+const allowedOrigins = [
+    process.env.FRONTEND_URL || 'https://1522-ticket-booking.vercel.app',
+    'http://localhost:3000', // For local development
+];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('CORS not allowed'));
+        }
+    },
+    credentials: true
+}));
 app.use(express.json());
 
 app.use('/api/tickets', ticketRoutes);
