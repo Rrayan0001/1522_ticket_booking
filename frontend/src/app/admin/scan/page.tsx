@@ -118,7 +118,30 @@ export default function ScanPage() {
             {!scanResult ? (
                 <div className="w-full max-w-md">
                     <QRScanner onScan={handleScan} />
-                    <p className="text-center text-gray-500 mt-4">Point camera at ticket QR code</p>
+                    <p className="text-center text-gray-500 mt-4 mb-8">Point camera at ticket QR code</p>
+
+                    <div className="border-t border-gray-800 pt-6">
+                        <p className="text-center text-gray-500 text-sm mb-4">OR ENTER MANUALLY</p>
+                        <form onSubmit={(e) => {
+                            e.preventDefault();
+                            const input = (e.target as HTMLFormElement).elements.namedItem('manualId') as HTMLInputElement;
+                            if (input.value) handleScan(input.value);
+                        }} className="flex gap-2">
+                            <input
+                                name="manualId"
+                                type="text"
+                                placeholder="Enter Ticket ID"
+                                className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:outline-none"
+                            />
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-3 rounded-lg transition-colors disabled:opacity-50"
+                            >
+                                Verify
+                            </button>
+                        </form>
+                    </div>
                 </div>
             ) : (
                 <div className="w-full max-w-md bg-gray-900 p-8 rounded-2xl border border-gray-700 text-center">
