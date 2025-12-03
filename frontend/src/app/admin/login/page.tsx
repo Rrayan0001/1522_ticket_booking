@@ -28,38 +28,47 @@ export default function AdminLoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-            <div className="bg-gray-800 p-8 rounded-2xl border border-gray-700 w-full max-w-md">
-                <h1 className="text-3xl font-bold text-white mb-2">Admin Login</h1>
-                <p className="text-gray-400 mb-8">Access the verification dashboard</p>
+        <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4">
+            <div className="bg-black/40 p-8 rounded-none border border-[#D4AF37]/30 w-full max-w-md relative overflow-hidden">
+                {/* Decorative Elements */}
+                <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-[#D4AF37]/50"></div>
+                <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-[#D4AF37]/50"></div>
+
+                <div className="text-center mb-8">
+                    <div className="w-16 h-16 border border-[#D4AF37] flex items-center justify-center mx-auto mb-4">
+                        <span className="text-[#D4AF37] font-bold font-playfair text-2xl">1522</span>
+                    </div>
+                    <h1 className="text-2xl font-bold text-[#D4AF37] font-playfair tracking-widest mb-2">ADMIN ACCESS</h1>
+                    <p className="text-gray-500 text-xs tracking-wider uppercase">Authorized Personnel Only</p>
+                </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">
                     <div>
-                        <label className="block text-gray-400 mb-2">Email</label>
+                        <label className="block text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-2">Email</label>
                         <input
                             type="email"
                             required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-white focus:border-purple-500 focus:outline-none"
-                            placeholder="admin@example.com"
+                            className="w-full bg-black/50 border-b border-[#D4AF37]/30 text-[#D4AF37] p-3 focus:border-[#D4AF37] focus:outline-none transition-colors placeholder-gray-700"
+                            placeholder="admin@1522.in"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-gray-400 mb-2">Password</label>
+                        <label className="block text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-2">Password</label>
                         <input
                             type="password"
                             required
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-white focus:border-purple-500 focus:outline-none"
+                            className="w-full bg-black/50 border-b border-[#D4AF37]/30 text-[#D4AF37] p-3 focus:border-[#D4AF37] focus:outline-none transition-colors placeholder-gray-700"
                             placeholder="••••••••"
                         />
                     </div>
 
                     {error && (
-                        <div className="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded-lg text-sm">
+                        <div className="bg-red-900/20 border border-red-500/50 text-red-400 p-3 text-sm text-center">
                             {error}
                         </div>
                     )}
@@ -67,9 +76,9 @@ export default function AdminLoginPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                        className="w-full bg-[#D4AF37] text-black font-bold py-4 hover:bg-[#FADA5E] transition-all tracking-widest uppercase text-sm mt-4"
                     >
-                        {loading ? 'Signing In...' : 'Sign In'}
+                        {loading ? 'AUTHENTICATING...' : 'ENTER DASHBOARD'}
                     </button>
                 </form>
             </div>

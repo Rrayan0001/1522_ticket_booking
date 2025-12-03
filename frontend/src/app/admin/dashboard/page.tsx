@@ -106,13 +106,22 @@ export default function AdminDashboard() {
                         <h1 className="text-xl font-playfair text-[#D4AF37] tracking-wider hidden md:block">ADMIN DASHBOARD</h1>
                     </div>
 
-                    <button
-                        onClick={() => signOut()}
-                        className="flex items-center gap-2 px-4 py-2 border border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition-all text-sm tracking-widest uppercase"
-                    >
-                        <LogOut size={16} />
-                        <span>Logout</span>
-                    </button>
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={() => router.push('/admin/scan')}
+                            className="flex items-center gap-2 px-4 py-2 bg-[#D4AF37] text-black hover:bg-[#FADA5E] transition-all text-sm font-bold tracking-widest uppercase"
+                        >
+                            <QrCode size={16} />
+                            <span className="hidden md:inline">Scanner</span>
+                        </button>
+                        <button
+                            onClick={() => signOut()}
+                            className="flex items-center gap-2 px-4 py-2 border border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition-all text-sm tracking-widest uppercase"
+                        >
+                            <LogOut size={16} />
+                            <span className="hidden md:inline">Logout</span>
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -130,8 +139,8 @@ export default function AdminDashboard() {
                                 key={status}
                                 onClick={() => setFilter(status)}
                                 className={`px-6 py-2 text-sm font-medium transition-all rounded-md ${filter === status
-                                        ? 'bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20'
-                                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                    ? 'bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20'
+                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
                                     }`}
                             >
                                 {status}
@@ -155,8 +164,8 @@ export default function AdminDashboard() {
                             >
                                 {/* Status Indicator */}
                                 <div className={`absolute top-0 right-0 px-4 py-1 text-xs font-bold uppercase tracking-wider ${ticket.status === 'VERIFIED' ? 'bg-green-900/80 text-green-400' :
-                                        ticket.status === 'REJECTED' ? 'bg-red-900/80 text-red-400' :
-                                            'bg-yellow-900/80 text-yellow-400'
+                                    ticket.status === 'REJECTED' ? 'bg-red-900/80 text-red-400' :
+                                        'bg-yellow-900/80 text-yellow-400'
                                     }`}>
                                     {ticket.status}
                                 </div>
