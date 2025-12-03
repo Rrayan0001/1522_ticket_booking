@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+@theme {
+  --font-playfair: var(--font-playfair);
+  --font-inter: var(--font-inter);
+}
+
+:root {
+  /* Brand Colors */
+  --color-rich-black: #050505;
+  --color-naples-yellow: #FADA5E;
+  /* Base yellow */
+  --color-gold-metallic: #D4AF37;
+  /* Premium gold for accents */
+  --color-rose-red: #C21E56;
+  --color-off-white: #E5E5E5;
+
+  /* Gradients */
+  --gradient-gold: linear-gradient(135deg, #D4AF37 0%, #FADA5E 50%, #D4AF37 100%);
+  --gradient-dark: linear-gradient(to bottom, #050505, #1A1A1A);
+}
+
+body {
+  color: var(--color-off-white);
+  background: var(--color-rich-black);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 16px;
+  /* Prevents mobile zoom on input focus */
+  overflow-x: hidden;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-playfair), serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Background Pattern */
+.bg-mandala {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  background-image: url('/assets/mandala.jpg');
+  /* Assuming user renamed it or I will */
+  background-size: cover;
+  background-position: center;
+  opacity: 0.15;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* Premium Inputs (Free Form Style) */
+.input-premium {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #333;
+  border-radius: 0;
+  padding: 1rem 0.5rem;
+  color: var(--color-naples-yellow);
+  font-family: var(--font-inter);
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.input-premium:focus {
+  outline: none;
+  border-bottom-color: var(--color-gold-metallic);
+  box-shadow: 0 4px 6px -1px rgba(212, 175, 55, 0.1);
+}
+
+.input-premium::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Premium Buttons */
+.btn-gold {
+  background: var(--gradient-gold);
+  color: var(--color-rich-black);
+  font-family: var(--font-playfair);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
+.btn-gold:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Glassmorphism Card */
+.glass-card {
+  background: rgba(30, 30, 30, 0.7);
+  /* Lighter background for contrast */
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  /* More visible border */
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(212, 175, 55, 0.1);
+  /* Stronger shadow + inner glow */
+}
+
+@media (max-width: 640px) {
+  .input-premium {
+    font-size: 16px;
+    /* Prevent iOS zoom */
+  }
+}
