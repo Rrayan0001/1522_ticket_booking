@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import QRScanner from '@/components/QRScanner';
 import { useAuth } from '@/contexts/AuthContext';
 
+// API URL - uses environment variable in production, localhost in development
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+
 interface ScanResult {
     result: 'VALID' | 'USED' | 'INVALID' | 'PENDING' | 'REJECTED' | 'VERIFIED';
     message: string;
@@ -35,7 +38,7 @@ export default function ScanPage() {
 
         try {
             const token = await getToken();
-            const res = await fetch('http://localhost:5001/api/scan/scan', {
+            const res = await fetch(`${API_URL}/api/scan/scan`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,7 +67,7 @@ export default function ScanPage() {
 
         try {
             const token = await getToken();
-            const res = await fetch('http://localhost:5001/api/scan/confirm', {
+            const res = await fetch(`${API_URL}/api/scan/confirm`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -120,8 +123,8 @@ export default function ScanPage() {
             ) : (
                 <div className="w-full max-w-md bg-gray-900 p-8 rounded-2xl border border-gray-700 text-center">
                     <div className={`text-3xl font-bold mb-4 ${scanResult.result === 'VERIFIED' ? 'text-green-500' :
-                            scanResult.result === 'USED' ? 'text-blue-500' :
-                                'text-red-500'
+                        scanResult.result === 'USED' ? 'text-blue-500' :
+                            'text-red-500'
                         }`}>
                         {scanResult.message}
                     </div>
