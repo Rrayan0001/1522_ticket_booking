@@ -184,6 +184,20 @@ export default function CustomerAuthPage() {
                         </button>
                     ) : (
                         <div className="animate-fade-in">
+                            {/* Better messaging after OTP sent */}
+                            <div className="mb-6 p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
+                                <p className="text-green-400 font-semibold text-sm mb-2">✓ OTP Sent Successfully!</p>
+                                <p className="text-gray-300 text-xs mb-2">
+                                    Check your email: <span className="text-[#D4AF37] break-all">{formData.email}</span>
+                                </p>
+                                <div className="mt-3 p-3 bg-black/40 rounded border border-[#D4AF37]/20">
+                                    <p className="text-[#D4AF37] text-xs font-semibold mb-1">⏱ Please Wait 1-2 Minutes</p>
+                                    <p className="text-gray-400 text-xs">
+                                        Email delivery may take up to 2 minutes. Check your spam folder if you don't see it.
+                                    </p>
+                                </div>
+                            </div>
+
                             <div className="my-6 md:my-8 p-4 md:p-6 border border-[#D4AF37]/30 bg-black/40">
                                 <label className="block text-[#D4AF37] text-xs md:text-sm mb-4 text-center tracking-widest">ENTER VERIFICATION CODE</label>
                                 <input
@@ -196,9 +210,6 @@ export default function CustomerAuthPage() {
                                     maxLength={8}
                                     autoFocus
                                 />
-                                <p className="text-xs text-gray-500 mt-4 text-center break-all">
-                                    Sent to {formData.email}
-                                </p>
                             </div>
 
                             <button
@@ -225,9 +236,9 @@ export default function CustomerAuthPage() {
                                     type="button"
                                     onClick={handleResendOTP}
                                     disabled={loading}
-                                    className="text-[#D4AF37] hover:text-white transition-colors disabled:opacity-50"
+                                    className="text-[#D4AF37] hover:text-white transition-colors disabled:opacity-50 font-semibold"
                                 >
-                                    Resend Code
+                                    {loading ? 'Sending...' : 'Resend Code'}
                                 </button>
                             </div>
                         </div>
