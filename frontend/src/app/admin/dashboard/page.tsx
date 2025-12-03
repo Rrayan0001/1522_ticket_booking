@@ -29,9 +29,18 @@ export default function AdminDashboard() {
     const [filter, setFilter] = useState('PENDING');
     const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
 
+    // Admin Email Check
+    const ADMIN_EMAILS = ['admin@1522.in', 'mrrayan0407@gmail.com'];
+
     useEffect(() => {
-        if (!authLoading && !user) {
-            router.push('/admin/login');
+        if (!authLoading) {
+            if (!user) {
+                router.push('/admin/login');
+            } else if (user.email && !ADMIN_EMAILS.includes(user.email)) {
+                // Redirect non-admin users (e.g. customers)
+                alert('Access Denied: Admin privileges required.');
+                router.push('/');
+            }
         }
     }, [user, authLoading, router]);
 

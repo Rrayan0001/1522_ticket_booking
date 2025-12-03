@@ -25,9 +25,18 @@ export default function ScanPage() {
     const [loading, setLoading] = useState(false);
     const [lastScanned, setLastScanned] = useState<string>('');
 
+    // Admin Email Check
+    const ADMIN_EMAILS = ['admin@1522.in', 'mrrayan0407@gmail.com'];
+
     useEffect(() => {
-        if (!authLoading && !user) {
-            router.push('/admin/scan/login');
+        if (!authLoading) {
+            if (!user) {
+                router.push('/admin/scan/login');
+            } else if (user.email && !ADMIN_EMAILS.includes(user.email)) {
+                // Redirect non-admin users
+                alert('Access Denied: Admin privileges required.');
+                router.push('/');
+            }
         }
     }, [user, authLoading, router]);
 
