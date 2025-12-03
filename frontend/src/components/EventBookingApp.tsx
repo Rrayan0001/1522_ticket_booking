@@ -65,7 +65,7 @@ const TICKET_TYPES: any = {
 
 // --- Components ---
 
-const Button = ({ children, onClick, variant = 'primary', className = '', disabled = false }: any) => {
+const Button = ({ children, onClick, variant = 'primary', className = '', disabled = false, type = 'button', ...props }: any) => {
     const baseStyle = "min-h-[48px] px-6 py-3 md:py-4 rounded-none font-semibold transition-all duration-300 transform active:scale-95 flex items-center justify-center gap-2 tracking-widest uppercase font-playfair text-sm md:text-base";
     const variants: any = {
         primary: "bg-gradient-to-r from-[#D4AF37] to-[#FADA5E] text-black shadow-lg shadow-[#D4AF37]/30 hover:shadow-[#D4AF37]/50 active:shadow-[#D4AF37]/70",
@@ -76,9 +76,11 @@ const Button = ({ children, onClick, variant = 'primary', className = '', disabl
 
     return (
         <button
+            type={type}
             onClick={onClick}
             disabled={disabled}
-            className={`${baseStyle} ${variants[variant]} ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+            className={`${baseStyle} ${variants[variant]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            {...props}
         >
             {children}
         </button>
@@ -525,7 +527,6 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                             <input
                                 type="file"
                                 accept="image/*"
-                                capture="environment"
                                 onChange={handleFileChange}
                                 className="hidden"
                                 id="screenshot-upload"
@@ -539,7 +540,7 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                                 ) : (
                                     <>
                                         <CreditCard size={20} className="text-gray-400" />
-                                        <span className="text-gray-400 text-sm">Tap to upload or take photo</span>
+                                        <span className="text-gray-400 text-sm">Tap to upload photo</span>
                                     </>
                                 )}
                             </label>
@@ -592,7 +593,8 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                     </div>
 
                     <Button
-                        disabled={isSubmitting}
+                        type="submit"
+                        disabled={isSubmitting || isExtractingUTR}
                         className="w-full mt-8"
                     >
                         {isSubmitting ? 'Processing...' : 'Confirm Booking'}
