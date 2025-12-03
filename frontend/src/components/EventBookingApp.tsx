@@ -2,6 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+
+// API URL - uses environment variable in production, localhost in development
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+
 import {
     Search,
     MapPin,
@@ -311,7 +315,7 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                 const formData = new FormData();
                 formData.append('screenshot', selectedFile);
 
-                const res = await fetch('http://localhost:5001/api/tickets/extract-utr', {
+                const res = await fetch(`${API_URL}/api/tickets/extract-utr`, {
                     method: 'POST',
                     body: formData
                 });
@@ -390,7 +394,7 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                 data.append('utr_number', extractedUTR); // Send extracted UTR
             }
 
-            const res = await fetch('http://localhost:5001/api/tickets', {
+            const res = await fetch(`${API_URL}/api/tickets`, {
                 method: 'POST',
                 body: data
             });

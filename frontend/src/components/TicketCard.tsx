@@ -1,5 +1,8 @@
 'use client';
 
+// API URL - uses environment variable in production, localhost in development
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+
 import { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 
@@ -19,7 +22,7 @@ export default function TicketCard({ ticketId }: { ticketId: string }) {
     useEffect(() => {
         const fetchTicket = async () => {
             try {
-                const res = await fetch(`http://localhost:5001/api/tickets/${ticketId}`);
+                const res = await fetch(`${API_URL}/api/tickets/${ticketId}`);
                 if (res.ok) {
                     const data = await res.json();
                     setTicket(data);
@@ -48,9 +51,9 @@ export default function TicketCard({ ticketId }: { ticketId: string }) {
         <div className="glass-card overflow-hidden relative group transition-all duration-300 hover:bg-black/60">
             {/* Status Banner */}
             <div className={`absolute top-0 right-0 px-4 py-1 text-xs font-bold tracking-widest ${ticket.status === 'VERIFIED' ? 'bg-green-900/80 text-green-400' :
-                    ticket.status === 'PENDING' ? 'bg-yellow-900/80 text-[#FADA5E]' :
-                        ticket.status === 'USED' ? 'bg-blue-900/80 text-blue-400' :
-                            'bg-red-900/80 text-red-400'
+                ticket.status === 'PENDING' ? 'bg-yellow-900/80 text-[#FADA5E]' :
+                    ticket.status === 'USED' ? 'bg-blue-900/80 text-blue-400' :
+                        'bg-red-900/80 text-red-400'
                 }`}>
                 {ticket.status}
             </div>
