@@ -521,20 +521,21 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                             <input
                                 type="file"
                                 accept="image/*"
+                                capture="environment"
                                 onChange={handleFileChange}
                                 className="hidden"
                                 id="screenshot-upload"
                             />
                             <label
                                 htmlFor="screenshot-upload"
-                                className={`flex items-center justify-center gap-2 w-full p-4 border-2 border-dashed transition-all cursor-pointer ${file ? 'border-[#D4AF37] bg-[#D4AF37]/10' : 'border-gray-600 hover:border-[#D4AF37] hover:bg-white/5'}`}
+                                className={`flex items-center justify-center gap-2 w-full p-4 md:p-4 border-2 border-dashed transition-all cursor-pointer ${file ? 'border-[#D4AF37] bg-[#D4AF37]/10' : 'border-gray-600 hover:border-[#D4AF37] hover:bg-white/5'} min-h-[60px] touch-manipulation`}
                             >
                                 {file ? (
                                     <span className="text-[#D4AF37] font-medium truncate">{file.name}</span>
                                 ) : (
                                     <>
                                         <CreditCard size={20} className="text-gray-400" />
-                                        <span className="text-gray-400 text-sm">Click to upload screenshot</span>
+                                        <span className="text-gray-400 text-sm">Tap to upload or take photo</span>
                                     </>
                                 )}
                             </label>
