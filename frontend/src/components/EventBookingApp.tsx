@@ -39,8 +39,8 @@ const EVENTS = [
         date: "21 DEC",
         time: "8 PM - 12 AM",
         venue: "The Pub, 1522 Sahakaranagar",
-        image: "/assets/stereo-sutra.jpg",
-        backdrop: "/assets/stereo-sutra.jpg",
+        image: "/assets/event_poster.png",
+        backdrop: "/assets/event_poster.png",
         description: "Experience an electrifying night of Folk-Electronica at its finest! Presented by An Audio Affair in association with 1522. Enjoy unlimited food & drinks while grooving to premium live music.",
         artist: "Stereo Sutra Band",
         features: ["Unlimited Food & Drinks", "Folk-Electronica Fusion", "Premium Live Performance"]
@@ -125,7 +125,7 @@ const EventCard = ({ event, onClick, className = '' }: any) => (
             <img
                 src={event.image}
                 alt={event.title}
-                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                className="w-full h-full object-contain p-2 transform group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute top-3 right-3 z-20 bg-black/60 backdrop-blur-md px-2 py-1 border border-[#D4AF37]/30 flex items-center gap-1">
                 <Star size={12} className="text-[#D4AF37] fill-[#D4AF37]" />
@@ -764,9 +764,6 @@ const ProfileView = ({ setView }: any) => {
                             </button>
                         </div>
 
-                        <Button variant="outline" className="w-full mt-8" onClick={handleLogout}>
-                            Log Out
-                        </Button>
                     </>
                 ) : (
                     <form onSubmit={handleSave} className="space-y-6 animate-in slide-in-from-right-8 duration-300">
@@ -802,21 +799,197 @@ const ProfileView = ({ setView }: any) => {
                                 />
                             </div>
                         </div>
-                        <div className="flex gap-3">
-                            <Button className="flex-1">Save Changes</Button>
-                            <Button type="button" variant="ghost" onClick={() => setIsEditing(false)} className="flex-1">Cancel</Button>
+
+                        <div className="flex gap-4">
+                            <Button variant="outline" onClick={() => setIsEditing(false)} className="flex-1">
+                                Cancel
+                            </Button>
+                            <Button type="submit" className="flex-1">
+                                Save Changes
+                            </Button>
                         </div>
                     </form>
+                )}
+
+                {!isEditing && (
+                    <div className="space-y-2 mt-4">
+                        <button
+                            onClick={() => setView('settings')}
+                            className="w-full flex items-center justify-between p-4 bg-white/5 border border-[#D4AF37]/10 hover:border-[#D4AF37]/30 transition-all group"
+                        >
+                            <span className="text-gray-300 group-hover:text-white transition-colors">Settings & Policies</span>
+                            <ChevronLeft className="rotate-180 text-gray-500 group-hover:text-[#D4AF37] transition-colors" size={20} />
+                        </button>
+
+                        <Button variant="outline" className="w-full mt-8" onClick={handleLogout}>
+                            Log Out
+                        </Button>
+                    </div>
                 )}
             </div>
         </div>
     );
 };
 
+const SettingsView = ({ setView }: any) => {
+    const settingsOptions = [
+        { id: 'terms', label: 'Terms and Conditions', icon: FileText },
+        { id: 'steps', label: 'Steps to Follow', icon: ListChecks },
+        { id: 'refund', label: 'Refund Policy', icon: RefreshCcw },
+        { id: 'organizer', label: 'Speak with Organizer', icon: MessageCircle }
+    ];
+
+    return (
+        <div className="min-h-screen pb-24 animate-in fade-in duration-500">
+            <div className="p-6 md:p-8 border-b border-[#D4AF37]/10 mb-6 flex items-center gap-4">
+                <button
+                    onClick={() => setView('profile')}
+                    className="w-10 h-10 bg-white/5 border border-[#D4AF37]/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+                >
+                    <ChevronLeft size={24} />
+                </button>
+                <h1 className="text-2xl font-bold text-[#D4AF37] font-playfair">Settings</h1>
+            </div>
+
+            <div className="px-6 md:px-8 space-y-4">
+                {settingsOptions.map((option) => (
+                    <button
+                        key={option.id}
+                        onClick={() => setView(option.id)}
+                        className="w-full flex items-center justify-between p-4 bg-white/5 border border-[#D4AF37]/10 hover:border-[#D4AF37]/30 transition-all group"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-black/40 flex items-center justify-center text-[#D4AF37]">
+                                <option.icon size={20} />
+                            </div>
+                            <span className="text-gray-300 group-hover:text-white transition-colors font-medium">{option.label}</span>
+                        </div>
+                        <ChevronLeft className="rotate-180 text-gray-500 group-hover:text-[#D4AF37] transition-colors" size={20} />
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+const TermsView = ({ setView }: any) => (
+    <div className="min-h-screen pb-24 animate-in fade-in duration-500">
+        <div className="p-6 md:p-8 border-b border-[#D4AF37]/10 mb-6 flex items-center gap-4">
+            <button
+                onClick={() => setView('settings')}
+                className="w-10 h-10 bg-white/5 border border-[#D4AF37]/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+            >
+                <ChevronLeft size={24} />
+            </button>
+            <h1 className="text-xl font-bold text-[#D4AF37] font-playfair">Terms & Conditions</h1>
+        </div>
+        <div className="px-6 md:px-8 text-gray-300 space-y-4 text-sm leading-relaxed">
+            <p>1. <strong>Entry:</strong> Admission rights reserved. Guests must be 21+ years of age. Valid ID proof is mandatory.</p>
+            <p>2. <strong>Dress Code:</strong> Smart casuals. No slippers or shorts allowed for men.</p>
+            <p>3. <strong>Behavior:</strong> Any misconduct or unruly behavior will lead to immediate removal from the premises without refund.</p>
+            <p>4. <strong>Liability:</strong> The management is not responsible for loss or theft of personal belongings.</p>
+            <p>5. <strong>Rights:</strong> The organizer reserves the right to change the artist line-up or event timings without prior notice.</p>
+        </div>
+    </div>
+);
+
+const StepsView = ({ setView }: any) => (
+    <div className="min-h-screen pb-24 animate-in fade-in duration-500">
+        <div className="p-6 md:p-8 border-b border-[#D4AF37]/10 mb-6 flex items-center gap-4">
+            <button
+                onClick={() => setView('settings')}
+                className="w-10 h-10 bg-white/5 border border-[#D4AF37]/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+            >
+                <ChevronLeft size={24} />
+            </button>
+            <h1 className="text-xl font-bold text-[#D4AF37] font-playfair">Steps to Follow</h1>
+        </div>
+        <div className="px-6 md:px-8 space-y-6">
+            {[
+                { title: "Book Your Ticket", desc: "Select your ticket type (Stag, Couple, VIP) and complete the payment." },
+                { title: "Receive Confirmation", desc: "You will receive a digital ticket with a unique QR code." },
+                { title: "Arrive at Venue", desc: "Show your QR code at the entrance for scanning." },
+                { title: "Enjoy the Event", desc: "Get your wristband and enjoy the night!" }
+            ].map((step, idx) => (
+                <div key={idx} className="flex gap-4">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#D4AF37] text-black font-bold flex items-center justify-center">
+                        {idx + 1}
+                    </div>
+                    <div>
+                        <h3 className="text-white font-bold mb-1">{step.title}</h3>
+                        <p className="text-gray-400 text-sm">{step.desc}</p>
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+);
+
+const RefundView = ({ setView }: any) => (
+    <div className="min-h-screen pb-24 animate-in fade-in duration-500">
+        <div className="p-6 md:p-8 border-b border-[#D4AF37]/10 mb-6 flex items-center gap-4">
+            <button
+                onClick={() => setView('settings')}
+                className="w-10 h-10 bg-white/5 border border-[#D4AF37]/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+            >
+                <ChevronLeft size={24} />
+            </button>
+            <h1 className="text-xl font-bold text-[#D4AF37] font-playfair">Refund Policy</h1>
+        </div>
+        <div className="px-6 md:px-8 text-gray-300 space-y-4 text-sm leading-relaxed">
+            <div className="p-4 bg-red-900/20 border border-red-500/30 rounded-lg mb-6">
+                <p className="text-red-400 font-bold">Important: All ticket sales are final.</p>
+            </div>
+            <p>1. <strong>Cancellations:</strong> Tickets once booked cannot be cancelled or refunded.</p>
+            <p>2. <strong>Event Cancellation:</strong> In the rare event that the show is cancelled by the organizers, a full refund will be processed within 7-10 working days.</p>
+            <p>3. <strong>Transfers:</strong> Tickets are non-transferable unless approved by the management in writing.</p>
+            <p>4. <strong>No Shows:</strong> No refunds will be issued for guests who do not attend the event.</p>
+        </div>
+    </div>
+);
+
+const OrganizerView = ({ setView }: any) => (
+    <div className="min-h-screen pb-24 animate-in fade-in duration-500">
+        <div className="p-6 md:p-8 border-b border-[#D4AF37]/10 mb-6 flex items-center gap-4">
+            <button
+                onClick={() => setView('settings')}
+                className="w-10 h-10 bg-white/5 border border-[#D4AF37]/20 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+            >
+                <ChevronLeft size={24} />
+            </button>
+            <h1 className="text-xl font-bold text-[#D4AF37] font-playfair">Speak with Organizer</h1>
+        </div>
+        <div className="px-6 md:px-8 space-y-6">
+            <div className="bg-white/5 p-6 border border-[#D4AF37]/20 text-center">
+                <div className="w-16 h-16 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-4 text-[#D4AF37]">
+                    <Phone size={32} />
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2">Contact Support</h3>
+                <p className="text-gray-400 text-sm mb-6">Need help with your booking? Our team is available 24/7.</p>
+                <a href="tel:+919876543210" className="btn-gold w-full py-3 block">
+                    CALL NOW
+                </a>
+            </div>
+
+            <div className="bg-white/5 p-6 border border-[#D4AF37]/20 text-center">
+                <div className="w-16 h-16 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-4 text-[#D4AF37]">
+                    <Mail size={32} />
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2">Email Us</h3>
+                <p className="text-gray-400 text-sm mb-6">Send us your queries and we'll get back to you.</p>
+                <a href="mailto:support@1522.in" className="btn-gold w-full py-3 block">
+                    SEND EMAIL
+                </a>
+            </div>
+        </div>
+    </div>
+);
+
+import { FileText, ListChecks, RefreshCcw, MessageCircle, Phone, Mail } from 'lucide-react';
 // --- Main Application ---
 
 const EventBookingApp = () => {
-    const [view, setView] = useState('home'); // home, detail, booking, checkout, success, tickets, profile
+    const [view, setView] = useState('home'); // home, detail, booking, checkout, success, tickets, profile, settings...
     const [selectedEvent, setSelectedEvent] = useState<any>(null);
     const [ticketData, setTicketData] = useState<any>(null);
 
@@ -837,6 +1010,11 @@ const EventBookingApp = () => {
                     {view === 'success' && <SuccessView selectedEvent={selectedEvent} ticketData={ticketData} setView={setView} />}
                     {view === 'tickets' && <TicketsView setView={setView} />}
                     {view === 'profile' && <ProfileView setView={setView} />}
+                    {view === 'settings' && <SettingsView setView={setView} />}
+                    {view === 'terms' && <TermsView setView={setView} />}
+                    {view === 'steps' && <StepsView setView={setView} />}
+                    {view === 'refund' && <RefundView setView={setView} />}
+                    {view === 'organizer' && <OrganizerView setView={setView} />}
                 </div>
 
                 {/* Bottom Nav */}

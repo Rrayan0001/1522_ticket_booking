@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Chonburi, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 
-const playfair = Playfair_Display({
+const chonburi = Chonburi({
+  weight: "400",
   subsets: ["latin"],
-  variable: "--font-playfair",
+  variable: "--font-chonburi",
   display: "swap",
 });
 
-const inter = Inter({
+const spaceMono = Space_Mono({
+  weight: ["400", "700"],
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-space",
   display: "swap",
 });
 
@@ -28,9 +30,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${playfair.variable} ${inter.variable} antialiased min-h-screen relative`}
+        className={`${chonburi.variable} ${spaceMono.variable} antialiased min-h-screen relative`}
       >
-        <div className="bg-mandala" />
         <AuthProvider>
           {children}
         </AuthProvider>
@@ -38,3 +39,4 @@ export default function RootLayout({
     </html>
   );
 }
+

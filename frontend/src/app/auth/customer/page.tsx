@@ -126,8 +126,8 @@ export default function CustomerAuthPage() {
                             className="h-20 md:h-28 lg:h-32 mx-auto drop-shadow-2xl brightness-125 contrast-125"
                         />
                     </div>
-                    <h1 className="text-3xl md:text-5xl font-bold text-[#D4AF37] mb-3 tracking-widest">
-                        1522
+                    <h1 className="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-3 tracking-widest font-chonburi uppercase">
+                        1522 Sahakar Nagar
                     </h1>
                     <p className="text-sm md:text-base text-gray-400 font-light tracking-wide">
                         Enter your details to proceed with booking

@@ -1,32 +1,57 @@
 @import "tailwindcss";
 
+
 @theme {
-  --font-playfair: var(--font-playfair);
-  --font-inter: var(--font-inter);
+  --font-chonburi: 'Chonburi', serif;
+  --font-space: 'Space Mono', monospace;
+
+  --color-retro-bg: #1A120B;
+  /* Deep Warm Brown/Black */
+  --color-retro-cream: #F5F5DC;
+  /* Cream/Beige */
+  --color-retro-orange: #D45D00;
+  /* Burnt Orange */
+  --color-retro-mustard: #E1AD01;
+  /* Mustard Yellow */
+  --color-retro-leather: #3C2A21;
+  /* Leather Brown */
 }
 
 :root {
-  /* Brand Colors */
-  --color-rich-black: #050505;
-  --color-naples-yellow: #FADA5E;
-  /* Base yellow */
-  --color-gold-metallic: #D4AF37;
-  /* Premium gold for accents */
-  --color-rose-red: #C21E56;
-  --color-off-white: #E5E5E5;
+  /* Map to generic names for compatibility if needed,
+     but we will use the retro-* utilities primarily */
+  --color-rich-black: var(--color-retro-bg);
+  --color-naples-yellow: var(--color-retro-mustard);
+  --color-gold-metallic: var(--color-retro-orange);
+  --color-rose-red: var(--color-retro-orange);
+  --color-off-white: var(--color-retro-cream);
 
-  /* Gradients */
-  --gradient-gold: linear-gradient(135deg, #D4AF37 0%, #FADA5E 50%, #D4AF37 100%);
-  --gradient-dark: linear-gradient(to bottom, #050505, #1A1A1A);
+  /* Gradients/Effects */
+  --gradient-retro: linear-gradient(135deg, var(--color-retro-orange) 0%, #FF7F50 100%);
+  --shadow-retro: 4px 4px 0px var(--color-retro-mustard);
 }
 
 body {
-  color: var(--color-off-white);
-  background: var(--color-rich-black);
-  font-family: var(--font-inter), sans-serif;
+  color: var(--color-retro-cream);
+  background-color: var(--color-retro-bg);
+  font-family: var(--font-space);
   font-size: 16px;
-  /* Prevents mobile zoom on input focus */
   overflow-x: hidden;
+  position: relative;
+}
+
+/* Grain Effect Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 /* Typography */
@@ -36,91 +61,83 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-playfair), serif;
+  font-family: var(--font-chonburi);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  color: var(--color-retro-cream);
 }
 
-/* Background Pattern */
-.bg-mandala {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-  background-image: url('/assets/mandala.jpg');
-  /* Assuming user renamed it or I will */
-  background-size: cover;
-  background-position: center;
-  opacity: 0.15;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-}
-
-/* Premium Inputs (Free Form Style) */
+/* Premium Inputs (Retro Style) */
 .input-premium {
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid #333;
-  border-radius: 0;
-  padding: 1rem 0.5rem;
-  color: var(--color-naples-yellow);
-  font-family: var(--font-inter);
+  background: rgba(60, 42, 33, 0.6);
+  /* Leather Brown with opacity */
+  border: 2px solid var(--color-retro-mustard);
+  border-radius: 4px;
+  padding: 1rem;
+  color: var(--color-retro-cream);
+  font-family: var(--font-space);
   font-size: 1.1rem;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   width: 100%;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
 }
 
 .input-premium:focus {
   outline: none;
-  border-bottom-color: var(--color-gold-metallic);
-  box-shadow: 0 4px 6px -1px rgba(212, 175, 55, 0.1);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--color-retro-orange);
+  border-color: var(--color-retro-orange);
 }
 
 .input-premium::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(245, 245, 220, 0.4);
 }
 
-/* Premium Buttons */
+/* Premium Buttons (Retro Style) */
 .btn-gold {
-  background: var(--gradient-gold);
-  color: var(--color-rich-black);
-  font-family: var(--font-playfair);
-  font-weight: 700;
+  background: var(--color-retro-orange);
+  color: var(--color-retro-cream);
+  font-family: var(--font-chonburi);
+  font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  border: none;
+  border: 2px solid var(--color-retro-cream);
+  padding: 0.75rem 1.5rem;
   position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  box-shadow: 4px 4px 0px var(--color-retro-mustard);
 }
 
 .btn-gold:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--color-retro-mustard);
+  background: #E66A1F;
+  /* Slightly lighter orange */
+}
+
+.btn-gold:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--color-retro-mustard);
 }
 
 .btn-gold:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
-/* Glassmorphism Card */
+/* Glassmorphism Card -> Retro Card */
 .glass-card {
-  background: rgba(30, 30, 30, 0.7);
-  /* Lighter background for contrast */
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  /* More visible border */
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(212, 175, 55, 0.1);
-  /* Stronger shadow + inner glow */
+  background: var(--color-retro-leather);
+  border: 2px solid var(--color-retro-mustard);
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
+  backdrop-filter: none;
+  /* Removed blur for solid retro look */
 }
 
 @media (max-width: 640px) {
   .input-premium {
     font-size: 16px;
-    /* Prevent iOS zoom */
   }
 }
