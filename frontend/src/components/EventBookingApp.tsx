@@ -1542,10 +1542,10 @@ const OrganizerView = ({ setView }: any) => (
                 <div className="w-16 h-16 bg-[#C21E56]/10 rounded-full flex items-center justify-center mx-auto mb-4 text-[#C21E56]">
                     <Users size={32} />
                 </div>
-                <h3 className="text-white font-bold text-lg mb-2">Instagram</h3>
-                <p className="text-gray-400 text-sm mb-6">Follow us for updates and behind the scenes.</p>
-                <a href="https://instagram.com/1522thepub" target="_blank" rel="noopener noreferrer" className="btn-gold w-full py-3 block">
-                    FOLLOW US
+                <h3 className="text-white font-bold text-lg mb-2">@anaudioaffair</h3>
+                <p className="text-gray-400 text-sm mb-6">Have questions? DM us on Instagram for quick support.</p>
+                <a href="https://ig.me/m/anaudioaffair" target="_blank" rel="noopener noreferrer" className="btn-gold w-full py-3 block">
+                    DM US
                 </a>
             </div>
 
