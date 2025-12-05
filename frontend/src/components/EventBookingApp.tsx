@@ -179,6 +179,7 @@ const EventCard = ({ event, onClick, className = '' }: any) => (
                 className="w-full h-full object-contain p-2 transform group-hover:scale-105 transition-transform duration-700"
             />
         </div>
+        <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">An Audio Affair brings you</p>
         <h3 className="text-[#D4AF37] font-bold text-base md:text-lg lg:text-xl truncate font-playfair group-hover:text-white transition-colors">{event.title}</h3>
         <p className="text-gray-400 text-sm md:text-base">{event.genre.join(", ")}</p>
     </div>
