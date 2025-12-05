@@ -146,6 +146,26 @@ const Seat = ({ status, type, onClick, isSelected }: any) => {
     );
 };
 
+// Policy Footer for Razorpay compliance
+const PolicyFooter = () => (
+    <div className="bg-black/60 border-t border-[#D4AF37]/20 py-6 px-4 mt-8 mb-24">
+        <div className="max-w-md mx-auto text-center">
+            <p className="text-gray-500 text-xs mb-3">An Audio Affair © 2024</p>
+            <div className="flex flex-wrap justify-center gap-3 text-[10px] text-gray-400">
+                <Link href="/contact" className="hover:text-[#D4AF37] transition-colors">Contact Us</Link>
+                <span className="text-gray-600">•</span>
+                <Link href="/terms" className="hover:text-[#D4AF37] transition-colors">Terms & Conditions</Link>
+                <span className="text-gray-600">•</span>
+                <Link href="/privacy" className="hover:text-[#D4AF37] transition-colors">Privacy Policy</Link>
+                <span className="text-gray-600">•</span>
+                <Link href="/refunds" className="hover:text-[#D4AF37] transition-colors">Refund Policy</Link>
+                <span className="text-gray-600">•</span>
+                <Link href="/shipping" className="hover:text-[#D4AF37] transition-colors">Shipping Policy</Link>
+            </div>
+        </div>
+    </div>
+);
+
 const EventCard = ({ event, onClick, className = '' }: any) => (
     <div
         onClick={() => onClick(event)}
@@ -212,6 +232,9 @@ const HomeView = ({ setView, setSelectedEvent }: any) => {
                     className="w-full max-w-sm mx-auto"
                 />
             </div>
+
+            {/* Policy Footer */}
+            <PolicyFooter />
         </div>
     );
 };
