@@ -1005,7 +1005,7 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                     {step === 'otp' && (
                         <div className="space-y-4 p-4 bg-[#D4AF37]/5 border border-[#D4AF37]/30">
                             <p className="text-center text-gray-300 text-sm">
-                                We sent a 6-digit OTP to <span className="text-[#D4AF37] font-bold">{formData.email}</span>
+                                We sent an 8-digit OTP to <span className="text-[#D4AF37] font-bold">{formData.email}</span>
                             </p>
                             <input
                                 type="text"
