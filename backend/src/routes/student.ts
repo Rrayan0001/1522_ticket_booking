@@ -5,7 +5,7 @@ import Groq from 'groq-sdk';
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Verify Student ID Card
+// Verify Student ID Card - STRICT verification
 router.post('/verify-student-id', upload.single('id_card'), async (req, res) => {
     try {
         const file = req.file;
@@ -29,18 +29,41 @@ router.post('/verify-student-id', upload.single('id_card'), async (req, res) => 
                     content: [
                         {
                             type: "text",
-                            text: `Analyze this student ID card image and extract the validity/expiry year. 
-                            Look for text like "Valid Till", "Valid Through", "Expiry", "Valid Upto", or date ranges like "2024-2027".
-                            
-                            Return ONLY a JSON object with these fields:
-                            - is_student_id: boolean (true if this appears to be a valid student ID card)
-                            - valid_till_year: number (the year the ID is valid until, e.g., 2026 or 2027)
-                            - student_name: string (name on the ID if visible)
-                            - college_name: string (institution name if visible)
-                            - error: string (if unable to extract data, explain why)
-                            
-                            If you see a date range like "2024-2027", extract 2027 as the valid_till_year.
-                            If you cannot find validity info, set valid_till_year to null.`
+                            text: `You are a document verification system. Analyze this image and determine if it is a GENUINE COLLEGE/UNIVERSITY STUDENT ID CARD.
+
+STRICT VERIFICATION RULES:
+1. This MUST be a student ID card from a recognized educational institution (college, university, school)
+2. Look for these student-specific markers:
+   - Words like "Student", "ID Card", "Identity Card", "College", "University", "Institute", "School"
+   - Enrollment/Registration/Roll number
+   - Course name (B.Tech, MBA, B.Sc, etc.)
+   - Department name
+   - Academic year or semester
+   
+3. REJECT if you detect ANY of these non-student documents:
+   - Aadhaar Card (has 12-digit UID, UIDAI logo)
+   - PAN Card (has 10-character alphanumeric PAN)
+   - Driving License (has DL number, RTO details)
+   - Passport
+   - Voter ID
+   - Employee ID (company names without educational context)
+   - Any government ID that is not from an educational institution
+
+4. For validity, look for: "Valid Till", "Valid Through", "Valid Upto", "Expiry", or date ranges like "2024-2025", "2024-2027"
+
+Return ONLY a JSON object with these exact fields:
+{
+  "document_type": "student_id" | "aadhaar" | "pan_card" | "driving_license" | "employee_id" | "other",
+  "is_valid_student_id": boolean (true ONLY if this is genuinely a college/university student ID),
+  "college_name": string or null (name of educational institution),
+  "student_name": string or null,
+  "course": string or null (e.g., "B.Tech", "MBA"),
+  "enrollment_number": string or null,
+  "valid_till_year": number or null (extract year like 2025, 2026, 2027),
+  "rejection_reason": string or null (explain why this is NOT a valid student ID if rejected)
+}
+
+Be VERY STRICT. Only approve genuine educational institution student ID cards.`
                         },
                         {
                             type: "image_url",
@@ -62,44 +85,69 @@ router.post('/verify-student-id', upload.single('id_card'), async (req, res) => 
             const extracted = JSON.parse(content);
             console.log('Student ID Verification:', extracted);
 
-            // Check if it's a valid student ID
-            if (!extracted.is_student_id) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'This does not appear to be a valid student ID card',
-                    details: extracted.error || 'Please upload a clear photo of your student ID'
+            // STRICT CHECK 1: Must be document_type = "student_id"
+            if (extracted.document_type !== 'student_id') {
+                const documentNames: { [key: string]: string } = {
+                    'aadhaar': 'Aadhaar Card',
+                    'pan_card': 'PAN Card',
+                    'driving_license': 'Driving License',
+                    'employee_id': 'Employee ID',
+                    'other': 'Unknown document'
+                };
+                const detectedDoc = documentNames[extracted.document_type] || extracted.document_type;
+
+                return res.json({
+                    success: true,
+                    is_eligible: false,
+                    document_type: extracted.document_type,
+                    message: `This appears to be a ${detectedDoc}, not a student ID card. Only college/university student IDs are accepted.`,
+                    rejection_reason: extracted.rejection_reason
                 });
             }
 
-            // Check validity year
+            // STRICT CHECK 2: Must be is_valid_student_id = true
+            if (!extracted.is_valid_student_id) {
+                return res.json({
+                    success: true,
+                    is_eligible: false,
+                    document_type: extracted.document_type,
+                    message: extracted.rejection_reason || 'Could not verify as a valid student ID card',
+                    rejection_reason: extracted.rejection_reason
+                });
+            }
+
+            // STRICT CHECK 3: Must have validity year
             const validTillYear = extracted.valid_till_year;
-            const currentYear = new Date().getFullYear(); // 2025
 
             if (!validTillYear) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'Could not find validity year on the ID card',
-                    details: 'Please upload an ID card with a visible validity date'
+                return res.json({
+                    success: true,
+                    is_eligible: false,
+                    document_type: 'student_id',
+                    college_name: extracted.college_name,
+                    message: 'Could not find validity year on the student ID. Please upload an ID with visible validity date.',
                 });
             }
 
-            // Valid if year >= 2025
+            // STRICT CHECK 4: Valid year must be >= 2025
             const isEligible = validTillYear >= 2025;
 
             res.json({
                 success: true,
                 is_eligible: isEligible,
+                document_type: 'student_id',
                 valid_till_year: validTillYear,
                 student_name: extracted.student_name || null,
                 college_name: extracted.college_name || null,
+                course: extracted.course || null,
                 message: isEligible
-                    ? `Student discount applied! ID valid till ${validTillYear}`
-                    : `ID expired or expiring before 2025 (valid till ${validTillYear})`
+                    ? `✓ Student discount applied! Valid till ${validTillYear}`
+                    : `Student ID expired (valid till ${validTillYear}). Must be valid through 2025 or later.`
             });
         } else {
             res.status(400).json({
                 success: false,
-                error: 'Could not analyze the ID card image',
+                error: 'Could not analyze the image',
                 details: 'Please upload a clear, well-lit photo of your student ID'
             });
         }
