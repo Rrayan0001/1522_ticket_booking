@@ -519,6 +519,14 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState('');
 
+    // Email OTP verification states
+    const [step, setStep] = useState<'form' | 'otp' | 'payment'>('form');
+    const [otp, setOtp] = useState('');
+    const [otpSent, setOtpSent] = useState(false);
+    const [otpError, setOtpError] = useState('');
+    const [emailVerified, setEmailVerified] = useState(false);
+    const [ageConfirmed, setAgeConfirmed] = useState(false);
+
     // Student discount states
     const [studentIdFile, setStudentIdFile] = useState<File | null>(null);
     const [isVerifyingId, setIsVerifyingId] = useState(false);
@@ -603,18 +611,101 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
         }
     };
 
-    const handlePayment = async (e: React.FormEvent) => {
-        e.preventDefault();
+    // Send OTP to email
+    const handleSendOtp = async () => {
         setError('');
+        setOtpError('');
 
-        // Validation - Indian mobile number (10 digits, starts with 6,7,8,9)
+        if (!formData.name.trim()) {
+            setError('Please enter your name');
+            return;
+        }
+
         if (!/^[6-9]\d{9}$/.test(formData.phone)) {
-            setError('Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9)');
+            setError('Please enter a valid 10-digit Indian mobile number');
             return;
         }
 
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
             setError('Please enter a valid email address');
+            return;
+        }
+
+        if (!ageConfirmed) {
+            setError('Please confirm that you are 21+ years of age');
+            return;
+        }
+
+        setIsProcessing(true);
+
+        try {
+            // Import supabase dynamically
+            const { supabase } = await import('@/lib/supabase');
+
+            const { error } = await supabase.auth.signInWithOtp({
+                email: formData.email,
+                options: {
+                    shouldCreateUser: true
+                }
+            });
+
+            if (error) {
+                setOtpError(error.message);
+            } else {
+                setOtpSent(true);
+                setStep('otp');
+            }
+        } catch (err) {
+            console.error('OTP Error:', err);
+            setOtpError('Failed to send OTP. Please try again.');
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    // Verify OTP
+    const handleVerifyOtp = async () => {
+        if (!otp || otp.length !== 6) {
+            setOtpError('Please enter a valid 6-digit OTP');
+            return;
+        }
+
+        setIsProcessing(true);
+        setOtpError('');
+
+        try {
+            const { supabase } = await import('@/lib/supabase');
+
+            const { data, error } = await supabase.auth.verifyOtp({
+                email: formData.email,
+                token: otp,
+                type: 'email'
+            });
+
+            if (error) {
+                setOtpError(error.message);
+            } else if (data?.user) {
+                setEmailVerified(true);
+                setStep('payment');
+                // Save verified profile
+                localStorage.setItem('userProfile', JSON.stringify(formData));
+                localStorage.setItem('verifiedEmail', formData.email);
+            }
+        } catch (err) {
+            console.error('OTP Verification Error:', err);
+            setOtpError('Failed to verify OTP. Please try again.');
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    const handlePayment = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        // Ensure email is verified
+        if (!emailVerified) {
+            setError('Please verify your email first');
             return;
         }
 
@@ -894,20 +985,110 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                         </div>
                     </div>
 
-                    <Button
-                        type="submit"
-                        disabled={isProcessing || isVerifyingId}
-                        className="w-full mt-8"
-                    >
-                        {isProcessing ? (
-                            <span className="flex items-center justify-center gap-2">
-                                <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                                Processing...
-                            </span>
-                        ) : (
-                            `Pay ₹${getFinalPrice()}`
-                        )}
-                    </Button>
+                    {/* Age Confirmation */}
+                    {step === 'form' && (
+                        <div className="flex items-start gap-3 p-4 bg-white/5 border border-[#D4AF37]/20">
+                            <input
+                                type="checkbox"
+                                id="age-confirm"
+                                checked={ageConfirmed}
+                                onChange={(e) => setAgeConfirmed(e.target.checked)}
+                                className="w-5 h-5 mt-1 accent-[#D4AF37]"
+                            />
+                            <label htmlFor="age-confirm" className="text-gray-300 text-sm">
+                                I confirm that I am <span className="text-[#D4AF37] font-bold">21+ years</span> of age and agree to the terms and conditions.
+                            </label>
+                        </div>
+                    )}
+
+                    {/* OTP Step */}
+                    {step === 'otp' && (
+                        <div className="space-y-4 p-4 bg-[#D4AF37]/5 border border-[#D4AF37]/30">
+                            <p className="text-center text-gray-300 text-sm">
+                                We sent a 6-digit OTP to <span className="text-[#D4AF37] font-bold">{formData.email}</span>
+                            </p>
+                            <input
+                                type="text"
+                                maxLength={6}
+                                value={otp}
+                                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                className="w-full bg-white/5 border border-[#D4AF37]/30 p-4 text-white text-2xl text-center tracking-[0.5em] font-mono focus:outline-none focus:border-[#D4AF37]"
+                                placeholder="• • • • • •"
+                            />
+                            {otpError && (
+                                <p className="text-red-400 text-sm text-center">{otpError}</p>
+                            )}
+                            <button
+                                type="button"
+                                onClick={() => { setStep('form'); setOtp(''); setOtpError(''); }}
+                                className="text-gray-400 text-sm underline"
+                            >
+                                ← Change email
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Email Verified Badge */}
+                    {emailVerified && (
+                        <div className="flex items-center gap-2 p-3 bg-green-900/30 border border-green-500/50">
+                            <CheckCircle2 size={20} className="text-green-400" />
+                            <span className="text-green-400 text-sm">Email verified: {formData.email}</span>
+                        </div>
+                    )}
+
+                    {/* Action Buttons based on step */}
+                    {step === 'form' && (
+                        <Button
+                            type="button"
+                            onClick={handleSendOtp}
+                            disabled={isProcessing}
+                            className="w-full mt-4"
+                        >
+                            {isProcessing ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                                    Sending OTP...
+                                </span>
+                            ) : (
+                                'Verify Email & Continue'
+                            )}
+                        </Button>
+                    )}
+
+                    {step === 'otp' && (
+                        <Button
+                            type="button"
+                            onClick={handleVerifyOtp}
+                            disabled={isProcessing || otp.length !== 6}
+                            className="w-full mt-4"
+                        >
+                            {isProcessing ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                                    Verifying...
+                                </span>
+                            ) : (
+                                'Verify OTP'
+                            )}
+                        </Button>
+                    )}
+
+                    {step === 'payment' && (
+                        <Button
+                            type="submit"
+                            disabled={isProcessing || isVerifyingId}
+                            className="w-full mt-4"
+                        >
+                            {isProcessing ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                                    Processing...
+                                </span>
+                            ) : (
+                                `Pay ₹${getFinalPrice()}`
+                            )}
+                        </Button>
+                    )}
                 </form>
             </div>
         </div>
@@ -1031,19 +1212,23 @@ const TicketsView = ({ setView }: any) => {
 
     useEffect(() => {
         const fetchUserTickets = async () => {
+            // Prefer verified email, fallback to profile email
+            const verifiedEmail = localStorage.getItem('verifiedEmail');
             const savedProfile = localStorage.getItem('userProfile');
-            if (!savedProfile) {
+
+            let email = verifiedEmail;
+            if (!email && savedProfile) {
+                try {
+                    email = JSON.parse(savedProfile).email;
+                } catch { }
+            }
+
+            if (!email) {
                 setLoading(false);
                 return;
             }
 
             try {
-                const { email } = JSON.parse(savedProfile);
-                if (!email) {
-                    setLoading(false);
-                    return;
-                }
-
                 const res = await fetch(`${API_URL}/api/tickets/user/${email}`);
                 if (res.ok) {
                     const data = await res.json();
@@ -1382,16 +1567,11 @@ import { FileText, ListChecks, RefreshCcw, MessageCircle, Phone, Mail } from 'lu
 // --- Main Application ---
 
 const EventBookingApp = () => {
-    const [view, setView] = useState('home'); // home, detail, booking, checkout, success, tickets, profile, settings...
-    const [selectedEvent, setSelectedEvent] = useState<any>(null);
+    const [view, setView] = useState('detail'); // Start at detail view directly
+    const [selectedEvent, setSelectedEvent] = useState<any>(EVENTS[0]); // Default to first event
     const [ticketData, setTicketData] = useState<any>(null);
 
-    useEffect(() => {
-        const userProfile = localStorage.getItem('userProfile');
-        if (!userProfile) {
-            window.location.href = '/auth/customer';
-        }
-    }, []);
+    // No login redirect - users land directly on event page
 
     return (
         <div className="bg-[#050505] min-h-screen text-white font-inter selection:bg-[#D4AF37] selection:text-black">
