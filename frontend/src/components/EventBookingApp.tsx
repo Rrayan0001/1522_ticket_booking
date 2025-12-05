@@ -665,8 +665,8 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
 
     // Verify OTP
     const handleVerifyOtp = async () => {
-        if (!otp || otp.length !== 6) {
-            setOtpError('Please enter a valid 6-digit OTP');
+        if (!otp || otp.length !== 8) {
+            setOtpError('Please enter a valid 8-digit OTP');
             return;
         }
 
@@ -1009,9 +1009,9 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                             </p>
                             <input
                                 type="text"
-                                maxLength={6}
+                                maxLength={8}
                                 value={otp}
-                                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 8))}
                                 className="w-full bg-white/5 border border-[#D4AF37]/30 p-4 text-white text-2xl text-center tracking-[0.5em] font-mono focus:outline-none focus:border-[#D4AF37]"
                                 placeholder="• • • • • •"
                             />
@@ -1059,7 +1059,7 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                         <Button
                             type="button"
                             onClick={handleVerifyOtp}
-                            disabled={isProcessing || otp.length !== 6}
+                            disabled={isProcessing || otp.length !== 8}
                             className="w-full mt-4"
                         >
                             {isProcessing ? (
