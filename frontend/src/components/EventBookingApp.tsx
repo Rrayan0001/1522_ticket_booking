@@ -46,7 +46,7 @@ const EVENTS = [
         image: "/assets/event_poster.png",
         backdrop: "/assets/event_poster.png",
         description: "Experience an electrifying night of Folk-Electronica at its finest! Presented by An Audio Affair in association with 1522, The Pub Sahakar Nagar. Enjoy unlimited food & drinks while grooving to premium live music.",
-        artist: "Stereo Sutra Band",
+        artist: "An Audio Affair",
         artists: [
             {
                 name: "The Two Eyed Wizard",
@@ -187,16 +187,16 @@ const EventCard = ({ event, onClick, className = '' }: any) => (
 // --- Views ---
 
 const HomeView = ({ setView, setSelectedEvent }: any) => {
-    const [userName, setUserName] = useState('Guest');
+    const [userName, setUserName] = useState('');
 
     useEffect(() => {
         const saved = localStorage.getItem('userProfile');
         if (saved) {
             try {
                 const profile = JSON.parse(saved);
-                setUserName(profile.name || 'Guest');
+                setUserName(profile.name || '');
             } catch (e) {
-                setUserName('Guest');
+                setUserName('');
             }
         }
     }, []);
@@ -1277,7 +1277,7 @@ const TicketsView = ({ setView }: any) => {
 };
 
 const ProfileView = ({ setView }: any) => {
-    const [profile, setProfile] = useState({ name: 'Guest User', email: 'guest@example.com', phone: '' });
+    const [profile, setProfile] = useState({ name: '', email: '', phone: '' });
     const [isEditing, setIsEditing] = useState(false);
     const [editForm, setEditForm] = useState({ name: '', email: '', phone: '' });
 
@@ -1293,7 +1293,7 @@ const ProfileView = ({ setView }: any) => {
     const handleLogout = () => {
         if (window.confirm('Are you sure you want to log out?')) {
             localStorage.removeItem('userProfile');
-            setProfile({ name: 'Guest User', email: 'guest@example.com', phone: '' });
+            setProfile({ name: '', email: '', phone: '' });
             // Redirect to login page
             window.location.href = '/auth/customer';
         }
