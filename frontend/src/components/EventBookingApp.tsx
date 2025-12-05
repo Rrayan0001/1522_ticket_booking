@@ -607,9 +607,9 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
         e.preventDefault();
         setError('');
 
-        // Validation
-        if (!/^\d{10}$/.test(formData.phone)) {
-            setError('Please enter a valid 10-digit phone number');
+        // Validation - Indian mobile number (10 digits, starts with 6,7,8,9)
+        if (!/^[6-9]\d{9}$/.test(formData.phone)) {
+            setError('Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9)');
             return;
         }
 
@@ -778,10 +778,15 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                             <input
                                 type="tel"
                                 required
+                                maxLength={10}
+                                pattern="[6-9][0-9]{9}"
                                 value={formData.phone}
-                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                onChange={e => {
+                                    const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                    setFormData({ ...formData, phone: value });
+                                }}
                                 className="input-premium w-full bg-white/5 border border-[#D4AF37]/30 p-3 md:p-4 text-white text-base focus:outline-none focus:border-[#D4AF37] focus:shadow-[0_0_15px_rgba(212,175,55,0.15)] transition-all duration-300 rounded-sm"
-                                placeholder="Enter your phone"
+                                placeholder="Enter 10-digit mobile number"
                             />
                         </div>
                         <div className="group">
