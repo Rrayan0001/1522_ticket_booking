@@ -843,7 +843,7 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                         <div className="bg-white/5 p-4 border border-[#D4AF37]/20 space-y-3">
                             <div className="flex justify-between text-gray-400">
                                 <span>Ticket Type</span>
-                                <span className="text-white">{ticketType}</span>
+                                <span className="text-white">{String(ticketType)}</span>
                             </div>
                             <div className="flex justify-between text-gray-400">
                                 <span>Original Price</span>
