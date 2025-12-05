@@ -41,7 +41,7 @@ export default function Home() {
               In Association With
             </p>
             <h3 className="text-retro-cream font-chonburi text-lg mt-1 tracking-wide">
-              1522 Sahakar Nagar
+              1522, The Pub Sahakar Nagar
             </h3>
           </div>
 

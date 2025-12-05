@@ -152,4 +152,22 @@ router.get('/:ticket_id', async (req, res) => {
     res.json(data);
 });
 
+// Get Tickets by User Email
+router.get('/user/:email', async (req, res) => {
+    const { email } = req.params;
+
+    const { data, error } = await supabase
+        .from('tickets')
+        .select('ticket_id, name, ticket_type, status, price, created_at')
+        .ilike('email', email)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Fetch Error:', error);
+        return res.status(500).json({ error: 'Failed to fetch tickets' });
+    }
+
+    res.json(data);
+});
+
 export default router;

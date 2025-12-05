@@ -35,11 +35,11 @@ export default function AdminLoginPage() {
                 <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-[#D4AF37]/50"></div>
 
                 <div className="text-center mb-8">
-                    <div className="w-16 h-16 border border-[#D4AF37] flex items-center justify-center mx-auto mb-4">
-                        <span className="text-[#D4AF37] font-bold font-playfair text-2xl">1522</span>
+                    <div className="w-12 h-12 border border-[#D4AF37] flex items-center justify-center mb-4">
+                        <span className="text-[#D4AF37] font-bold font-playfair text-xl">1522</span>
                     </div>
-                    <h1 className="text-2xl font-bold text-[#D4AF37] font-playfair tracking-widest mb-2">ADMIN ACCESS</h1>
-                    <p className="text-gray-500 text-xs tracking-wider uppercase">Authorized Personnel Only</p>
+                    <h1 className="text-xl md:text-2xl font-playfair text-[#D4AF37] tracking-wider text-center">1522, The Pub Sahakar Nagar</h1>
+                    <p className="text-[#D4AF37] text-[10px] md:text-xs tracking-[0.3em] uppercase mt-2">Admin Portal</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">

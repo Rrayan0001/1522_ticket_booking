@@ -17,9 +17,15 @@ export default function CustomerAuthPage() {
     const [verifyLoading, setVerifyLoading] = useState(false);
     const [message, setMessage] = useState('');
 
+    const [isAgeVerified, setIsAgeVerified] = useState(false);
+
     const handleSendOTP = async () => {
         if (!formData.email) {
             setMessage('Please enter your email');
+            return;
+        }
+        if (!isAgeVerified) {
+            setMessage('You must be 21+ to enter.');
             return;
         }
 
@@ -34,6 +40,7 @@ export default function CustomerAuthPage() {
                     data: {
                         name: formData.name,
                         phone: formData.phone,
+                        is_age_verified: true // Store in metadata
                     }
                 }
             });
@@ -44,7 +51,7 @@ export default function CustomerAuthPage() {
                 setMessage('✓ OTP sent successfully');
                 setOtpSent(true);
                 // Save to userProfile for app-wide access
-                localStorage.setItem('userProfile', JSON.stringify(formData));
+                localStorage.setItem('userProfile', JSON.stringify({ ...formData, isAgeVerified: true }));
             }
         } catch (err) {
             console.error(err);
@@ -71,8 +78,8 @@ export default function CustomerAuthPage() {
                 setVerifyLoading(false);
             } else {
                 // Save profile data to localStorage
-                localStorage.setItem('userProfile', JSON.stringify(formData));
-                setMessage('✓ Verified! Welcome to 1522.');
+                localStorage.setItem('userProfile', JSON.stringify({ ...formData, isAgeVerified: true }));
+                setMessage('✓ Verified! Welcome to An Audio Affair.');
                 setTimeout(() => {
                     router.push('/book');
                 }, 1000);
@@ -119,15 +126,15 @@ export default function CustomerAuthPage() {
 
                 <div className="text-center mb-8 md:mb-10">
                     {/* Enhanced Logo Visibility */}
-                    <div className="inline-block bg-white/10 backdrop-blur-sm border border-[#D4AF37]/30 p-5 md:p-6 rounded-lg  mb-6 md:mb-8">
+                    <div className="inline-block p-5 md:p-6 mb-6 md:mb-8 animate-float">
                         <img
-                            src="/assets/logo.png"
+                            src="/assets/FullLogo_Transparent.png"
                             alt="1522 Logo"
-                            className="h-20 md:h-28 lg:h-32 mx-auto drop-shadow-2xl brightness-125 contrast-125"
+                            className="h-32 md:h-48 mx-auto drop-shadow-2xl brightness-110 animate-glow object-contain"
                         />
                     </div>
-                    <h1 className="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-3 tracking-widest font-chonburi uppercase">
-                        1522 Sahakar Nagar
+                    <h1 className="text-2xl md:text-3xl font-bold text-[#D4AF37] mb-3 tracking-widest font-chonburi uppercase">
+                        1522, The Pub Sahakar Nagar
                     </h1>
                     <p className="text-sm md:text-base text-gray-400 font-light tracking-wide">
                         Enter your details to proceed with booking
@@ -173,12 +180,27 @@ export default function CustomerAuthPage() {
                         </div>
                     </div>
 
+                    {!otpSent && (
+                        <div className="flex items-center gap-3 p-3 bg-white/5 border border-[#D4AF37]/20">
+                            <input
+                                type="checkbox"
+                                id="age-verify"
+                                checked={isAgeVerified}
+                                onChange={(e) => setIsAgeVerified(e.target.checked)}
+                                className="w-5 h-5 accent-[#D4AF37] cursor-pointer"
+                            />
+                            <label htmlFor="age-verify" className="text-gray-300 text-sm cursor-pointer select-none">
+                                I confirm that I am <span className="text-[#D4AF37] font-bold">21+ years</span> of age.
+                            </label>
+                        </div>
+                    )}
+
                     {!otpSent ? (
                         <button
                             type="button"
                             onClick={handleSendOTP}
-                            disabled={loading || !formData.name || !formData.phone || !formData.email}
-                            className="btn-gold w-full py-3 md:py-4 text-base md:text-lg tracking-widest mt-4"
+                            disabled={loading || !formData.name || !formData.phone || !formData.email || !isAgeVerified}
+                            className="btn-gold w-full py-3 md:py-4 text-base md:text-lg tracking-widest mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? 'GENERATING...' : 'GENERATE OTP'}
                         </button>
@@ -245,7 +267,7 @@ export default function CustomerAuthPage() {
                     )}
 
                     {message && (
-                        <div className={`p-4 text-sm text-center tracking-wide border ${message.includes('Error')
+                        <div className={`p-4 text-sm text-center tracking-wide border ${message.includes('Error') || message.includes('21+')
                             ? 'border-red-900/50 text-red-400 bg-red-900/10'
                             : 'border-green-900/50 text-[#D4AF37] bg-green-900/10'
                             }`}>

@@ -14,21 +14,33 @@ interface Ticket {
     created_at: string;
 }
 
-export default function TicketCard({ ticketId }: { ticketId: string }) {
-    const [ticket, setTicket] = useState<Ticket | null>(null);
-    const [qrCode, setQrCode] = useState('');
-    const [loading, setLoading] = useState(true);
+export default function TicketCard({ ticketId, data }: { ticketId: string, data?: Ticket }) {
+    const [ticket, setTicket] = useState<Ticket | null>(data || null);
+    const [qrCode, setQrCode] = useState<string | null>(null);
+    const [loading, setLoading] = useState(!data);
+
+    // Check if ticket is valid (VERIFIED status means paid, can show QR)
+    const isValidTicket = (status: string) => status === 'VERIFIED' || status === 'USED';
 
     useEffect(() => {
+        if (data) {
+            setTicket(data);
+            if (isValidTicket(data.status)) {
+                QRCode.toDataURL(data.ticket_id).then(setQrCode);
+            }
+            setLoading(false);
+            return;
+        }
+
         const fetchTicket = async () => {
             try {
                 const res = await fetch(`${API_URL}/api/tickets/${ticketId}`);
                 if (res.ok) {
-                    const data = await res.json();
-                    setTicket(data);
+                    const fetchedData = await res.json();
+                    setTicket(fetchedData);
 
-                    if (data.status === 'VERIFIED') {
-                        const qr = await QRCode.toDataURL(data.ticket_id);
+                    if (isValidTicket(fetchedData.status)) {
+                        const qr = await QRCode.toDataURL(fetchedData.ticket_id);
                         setQrCode(qr);
                     }
                 }
@@ -42,20 +54,26 @@ export default function TicketCard({ ticketId }: { ticketId: string }) {
         fetchTicket();
         const interval = setInterval(fetchTicket, 5000);
         return () => clearInterval(interval);
-    }, [ticketId]);
+    }, [ticketId, data]);
 
     if (loading) return <div className="glass-card p-6 animate-pulse h-64"></div>;
     if (!ticket) return null;
 
+    // Determine display status
+    const getDisplayStatus = () => {
+        if (ticket.status === 'VERIFIED') return { label: 'VALID', color: 'bg-green-900/80 text-green-400' };
+        if (ticket.status === 'USED') return { label: 'USED', color: 'bg-blue-900/80 text-blue-400' };
+        if (ticket.status === 'PENDING') return { label: 'PROCESSING', color: 'bg-yellow-900/80 text-[#FADA5E]' };
+        return { label: 'INVALID', color: 'bg-red-900/80 text-red-400' };
+    };
+
+    const displayStatus = getDisplayStatus();
+
     return (
         <div className="glass-card overflow-hidden relative group transition-all duration-300 hover:bg-black/60">
             {/* Status Banner */}
-            <div className={`absolute top-0 right-0 px-4 py-1 text-xs font-bold tracking-widest ${ticket.status === 'VERIFIED' ? 'bg-green-900/80 text-green-400' :
-                ticket.status === 'PENDING' ? 'bg-yellow-900/80 text-[#FADA5E]' :
-                    ticket.status === 'USED' ? 'bg-blue-900/80 text-blue-400' :
-                        'bg-red-900/80 text-red-400'
-                }`}>
-                {ticket.status}
+            <div className={`absolute top-0 right-0 px-4 py-1 text-xs font-bold tracking-widest ${displayStatus.color}`}>
+                {displayStatus.label}
             </div>
 
             <div className="p-6 border-b border-[#D4AF37]/20">
@@ -64,21 +82,23 @@ export default function TicketCard({ ticketId }: { ticketId: string }) {
             </div>
 
             <div className="p-6 flex flex-col items-center justify-center min-h-[200px]">
-                {ticket.status === 'VERIFIED' ? (
+                {isValidTicket(ticket.status) && qrCode ? (
                     <div className="text-center">
                         <div className="bg-white p-2 mb-4 inline-block rounded-sm">
                             <img src={qrCode} alt="Ticket QR" className="w-32 h-32" />
                         </div>
-                        <p className="text-[10px] text-gray-500 uppercase tracking-widest">Show at Gate</p>
+                        <p className="text-[10px] text-gray-500 uppercase tracking-widest">
+                            {ticket.status === 'USED' ? 'Ticket Already Used' : 'Show at Gate'}
+                        </p>
                     </div>
                 ) : ticket.status === 'PENDING' ? (
                     <div className="text-center">
                         <div className="w-16 h-16 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p className="text-gray-400 text-sm tracking-wide">Verification in Progress</p>
+                        <p className="text-gray-400 text-sm tracking-wide">Processing Payment...</p>
                     </div>
                 ) : (
                     <div className="text-center text-gray-500">
-                        <p className="tracking-widest uppercase text-sm">{ticket.status === 'USED' ? 'TICKET REDEEMED' : 'BOOKING REJECTED'}</p>
+                        <p className="tracking-widest uppercase text-sm">Booking Failed</p>
                     </div>
                 )}
             </div>
