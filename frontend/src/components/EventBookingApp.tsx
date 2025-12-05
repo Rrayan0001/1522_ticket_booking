@@ -1567,7 +1567,7 @@ import { FileText, ListChecks, RefreshCcw, MessageCircle, Phone, Mail } from 'lu
 // --- Main Application ---
 
 const EventBookingApp = () => {
-    const [view, setView] = useState('detail'); // Start at detail view directly
+    const [view, setView] = useState('home'); // Start at home view with poster
     const [selectedEvent, setSelectedEvent] = useState<any>(EVENTS[0]); // Default to first event
     const [ticketData, setTicketData] = useState<any>(null);
 
