@@ -16,6 +16,8 @@ const port = process.env.PORT || 5000;
 // CORS configuration - allow frontend URL
 const allowedOrigins = [
     process.env.FRONTEND_URL || 'https://1522-ticket-booking.vercel.app',
+    'https://anaudioaffair.in',
+    'https://www.anaudioaffair.in',
     'http://localhost:3000', // For local development
     'http://192.168.31.68:3000', // For local network access from phone
 ];
