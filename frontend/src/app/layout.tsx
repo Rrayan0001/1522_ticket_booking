@@ -18,8 +18,17 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "1522 - The Pub",
-  description: "Book tickets for exclusive events at 1522",
+  title: "An Audio Affair - Premium Live Music Events",
+  description: "Book tickets for exclusive live music events by An Audio Affair",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
+  openGraph: {
+    title: "An Audio Affair",
+    description: "Premium live music events and experiences",
+    siteName: "An Audio Affair",
+  },
 };
 
 export default function RootLayout({
@@ -28,9 +37,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${chonburi.variable} ${spaceMono.variable} antialiased min-h-screen relative`}
+        suppressHydrationWarning
       >
         <AuthProvider>
           {children}

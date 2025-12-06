@@ -88,10 +88,24 @@ const DATES = [
 
 const TIMES = ["19:00", "20:30", "22:00"];
 
+const GST_RATE = 0.18; // 18% GST for entertainment services in India
+
 const TICKET_TYPES: any = {
-    'BREW': { price: 2500, label: 'Stereo Sutra – Brew Pass (Unlimited Food + Unlimited Beer)' },
-    'SPIRITS': { price: 3000, label: 'Stereo Sutra – Spirits Pass (Unlimited Food + Unlimited IMFL)' },
-    'ELITE': { price: 5000, label: 'Stereo Sutra – Elite Pass (Unlimited Food + Unlimited Premium Liquor)' }
+    'BREW': {
+        basePrice: 2500,
+        price: Math.round(2500 * (1 + GST_RATE)), // 2950 with GST
+        label: 'Stereo Sutra – Brew Pass (Unlimited Food + Unlimited Beer)'
+    },
+    'SPIRITS': {
+        basePrice: 3000,
+        price: Math.round(3000 * (1 + GST_RATE)), // 3540 with GST
+        label: 'Stereo Sutra – Spirits Pass (Unlimited Food + Unlimited IMFL)'
+    },
+    'ELITE': {
+        basePrice: 5000,
+        price: Math.round(5000 * (1 + GST_RATE)), // 5900 with GST
+        label: 'Stereo Sutra – Elite Pass (Unlimited Food + Unlimited Premium Liquor)'
+    }
 };
 
 // --- Components ---
@@ -171,13 +185,20 @@ const EventCard = ({ event, onClick, className = '' }: any) => (
         onClick={() => onClick(event)}
         className={`group relative flex-shrink-0 cursor-pointer snap-start ${className || 'w-64 md:w-72 lg:w-80'}`}
     >
-        <div className="aspect-[2/3] overflow-hidden relative mb-4 shadow-2xl transition-transform duration-300 group-hover:-translate-y-2 group-active:translate-y-0 border border-[#D4AF37]/20">
+        <div className="aspect-[2/3] overflow-hidden relative mb-4 shadow-2xl transition-transform duration-300 group-hover:-translate-y-2 group-active:translate-y-0 border-2 border-[#D4AF37]/40 animate-pulse-border">
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 z-10" />
             <img
                 src={event.image}
                 alt={event.title}
                 className="w-full h-full object-contain p-2 transform group-hover:scale-105 transition-transform duration-700"
             />
+            {/* Tap hint overlay - visible on mobile */}
+            <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/90 to-transparent p-4 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+                <div className="flex items-center justify-center gap-2 text-[#D4AF37]">
+                    <span className="text-2xl animate-bounce">👆</span>
+                    <span className="text-sm font-semibold tracking-wider uppercase">Tap to view details</span>
+                </div>
+            </div>
         </div>
         <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">An Audio Affair brings you</p>
         <h3 className="text-[#D4AF37] font-bold text-base md:text-lg lg:text-xl truncate font-playfair group-hover:text-white transition-colors">{event.title}</h3>
@@ -407,10 +428,10 @@ const EventDetailView = ({ selectedEvent, setView }: any) => {
                     </div>
                 )}
 
-                {/* The Vibe Section */}
+                {/* Artist Details Section */}
                 {selectedEvent.vibe && (
                     <div className="mb-8 animate-in slide-in-from-bottom-8 duration-700 delay-500">
-                        <span className="text-[#D4AF37] text-xs block mb-3 uppercase tracking-widest">The Vibe</span>
+                        <span className="text-[#D4AF37] text-xs block mb-3 uppercase tracking-widest">Artist Details</span>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="p-4 bg-gradient-to-br from-[#D4AF37]/10 to-transparent border border-[#D4AF37]/20 text-center">
                                 <div className="text-[#D4AF37] mb-2 flex justify-center"><Mic2 size={20} /></div>
@@ -844,10 +865,17 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                                     key={type}
                                     type="button"
                                     onClick={() => setTicketType(type as any)}
-                                    className={`flex justify-between items-center p-4 border transition-all ${ticketType === type ? 'bg-[#D4AF37] border-[#D4AF37] text-black' : 'bg-white/5 border-[#D4AF37]/20 text-gray-400 hover:bg-white/10'}`}
+                                    className={`flex flex-col p-4 border transition-all ${ticketType === type ? 'bg-[#D4AF37] border-[#D4AF37] text-black' : 'bg-white/5 border-[#D4AF37]/20 text-gray-400 hover:bg-white/10'}`}
                                 >
-                                    <span className="font-bold font-playfair">{details.label}</span>
-                                    <span className="font-mono">₹{details.price}</span>
+                                    <div className="flex justify-between items-center w-full">
+                                        <span className="font-bold font-playfair text-left text-sm">{details.label}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center w-full mt-2 pt-2 border-t border-current/20">
+                                        <span className={`text-xs ${ticketType === type ? 'text-black/70' : 'text-gray-500'}`}>
+                                            ₹{details.basePrice} + 18% GST
+                                        </span>
+                                        <span className="font-mono font-bold text-lg">₹{details.price}</span>
+                                    </div>
                                 </button>
                             ))}
                         </div>
