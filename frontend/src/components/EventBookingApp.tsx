@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 
 // API URL - uses environment variable in production, localhost in development
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
@@ -1608,14 +1609,70 @@ const OrganizerView = ({ setView }: any) => (
 import { FileText, ListChecks, RefreshCcw, MessageCircle, Phone, Mail } from 'lucide-react';
 // --- Main Application ---
 
+// URL path to view mapping
+const VIEW_TO_PATH: Record<string, string> = {
+    'home': '/book',
+    'detail': '/event-details',
+    'checkout': '/checkout',
+    'success': '/booking-success',
+    'tickets': '/my-tickets',
+    'profile': '/profile',
+    'settings': '/settings',
+    'terms': '/terms',
+    'steps': '/steps',
+    'refund': '/refunds',
+    'organizer': '/contact'
+};
+
+const PATH_TO_VIEW: Record<string, string> = {
+    '/book': 'home',
+    '/event-details': 'detail',
+    '/checkout': 'checkout',
+    '/booking-success': 'success',
+    '/my-tickets': 'tickets',
+    '/profile': 'profile',
+    '/settings': 'settings',
+    '/terms': 'terms',
+    '/steps': 'steps',
+    '/refunds': 'refund',
+    '/contact': 'organizer'
+};
+
 interface EventBookingAppProps {
     initialView?: string;
 }
 
 const EventBookingApp = ({ initialView = 'home' }: EventBookingAppProps) => {
-    const [view, setView] = useState(initialView); // Start at the specified view
-    const [selectedEvent, setSelectedEvent] = useState<any>(EVENTS[0]); // Default to first event
+    const router = useRouter();
+    const pathname = usePathname();
+
+    // Determine initial view from URL path or prop
+    const getInitialView = useCallback(() => {
+        if (pathname && PATH_TO_VIEW[pathname]) {
+            return PATH_TO_VIEW[pathname];
+        }
+        return initialView;
+    }, [pathname, initialView]);
+
+    const [view, setView] = useState(getInitialView);
+    const [selectedEvent, setSelectedEvent] = useState<any>(EVENTS[0]);
     const [ticketData, setTicketData] = useState<any>(null);
+
+    // Navigate function that updates both view state and URL
+    const navigate = useCallback((newView: string) => {
+        setView(newView);
+        const path = VIEW_TO_PATH[newView];
+        if (path && pathname !== path) {
+            router.push(path, { scroll: false });
+        }
+    }, [router, pathname]);
+
+    // Sync view with URL on path change
+    useEffect(() => {
+        if (pathname && PATH_TO_VIEW[pathname] && PATH_TO_VIEW[pathname] !== view) {
+            setView(PATH_TO_VIEW[pathname]);
+        }
+    }, [pathname]);
 
     // No login redirect - users land directly on event page
 
@@ -1630,38 +1687,38 @@ const EventBookingApp = ({ initialView = 'home' }: EventBookingAppProps) => {
                 </div>
 
                 <div className="relative z-10">
-                    {view === 'home' && <HomeView setView={setView} setSelectedEvent={setSelectedEvent} />}
-                    {view === 'detail' && <EventDetailView selectedEvent={selectedEvent} setView={setView} />}
-                    {view === 'checkout' && <CheckoutView setView={setView} setTicketData={setTicketData} />}
-                    {view === 'success' && <SuccessView selectedEvent={selectedEvent} ticketData={ticketData} setView={setView} />}
-                    {view === 'tickets' && <TicketsView setView={setView} />}
-                    {view === 'profile' && <ProfileView setView={setView} />}
-                    {view === 'settings' && <SettingsView setView={setView} />}
-                    {view === 'terms' && <TermsView setView={setView} />}
-                    {view === 'steps' && <StepsView setView={setView} />}
-                    {view === 'refund' && <RefundView setView={setView} />}
-                    {view === 'organizer' && <OrganizerView setView={setView} />}
+                    {view === 'home' && <HomeView setView={navigate} setSelectedEvent={setSelectedEvent} />}
+                    {view === 'detail' && <EventDetailView selectedEvent={selectedEvent} setView={navigate} />}
+                    {view === 'checkout' && <CheckoutView setView={navigate} setTicketData={setTicketData} />}
+                    {view === 'success' && <SuccessView selectedEvent={selectedEvent} ticketData={ticketData} setView={navigate} />}
+                    {view === 'tickets' && <TicketsView setView={navigate} />}
+                    {view === 'profile' && <ProfileView setView={navigate} />}
+                    {view === 'settings' && <SettingsView setView={navigate} />}
+                    {view === 'terms' && <TermsView setView={navigate} />}
+                    {view === 'steps' && <StepsView setView={navigate} />}
+                    {view === 'refund' && <RefundView setView={navigate} />}
+                    {view === 'organizer' && <OrganizerView setView={navigate} />}
                 </div>
 
                 {/* Bottom Nav */}
                 <div className="fixed bottom-0 left-0 right-0 p-3 md:p-4 z-40">
                     <nav className="mx-auto max-w-md lg:max-w-2xl bg-black/90 backdrop-blur-xl border border-[#D4AF37]/30 px-4 md:px-8 py-3 md:py-4 flex justify-around items-center shadow-lg shadow-black/50 rounded-lg md:rounded-none">
                         <button
-                            onClick={() => setView('home')}
+                            onClick={() => navigate('home')}
                             className={`${view === 'home' ? 'text-[#D4AF37]' : 'text-gray-400'} hover:text-white active:text-[#D4AF37] transition-colors flex flex-col items-center gap-1 min-w-[60px] md:min-w-[80px] py-2`}
                         >
                             <PartyPopper size={24} className="md:w-6 md:h-6" />
                             <span className="text-[9px] md:text-[10px] font-medium uppercase tracking-wider">Events</span>
                         </button>
                         <button
-                            onClick={() => setView('tickets')}
+                            onClick={() => navigate('tickets')}
                             className={`${view === 'tickets' ? 'text-[#D4AF37]' : 'text-gray-400'} hover:text-white active:text-[#D4AF37] transition-colors flex flex-col items-center gap-1 min-w-[60px] md:min-w-[80px] py-2`}
                         >
                             <Ticket size={24} className="md:w-6 md:h-6" />
                             <span className="text-[9px] md:text-[10px] font-medium uppercase tracking-wider">Tickets</span>
                         </button>
                         <button
-                            onClick={() => setView('profile')}
+                            onClick={() => navigate('profile')}
                             className={`${view === 'profile' ? 'text-[#D4AF37]' : 'text-gray-400'} hover:text-white active:text-[#D4AF37] transition-colors flex flex-col items-center gap-1 min-w-[60px] md:min-w-[80px] py-2`}
                         >
                             <Users size={24} className="md:w-6 md:h-6" />
