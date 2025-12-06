@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { QRCodeSVG } from 'qrcode.react';
 import { useRouter, usePathname } from 'next/navigation';
 
 // API URL - uses environment variable in production, localhost in development
@@ -207,6 +208,51 @@ const EventCard = ({ event, onClick, className = '' }: any) => (
     </div>
 );
 
+const OfferDetailBanner = () => (
+    <div className="w-full bg-gradient-to-r from-[#D4AF37]/20 via-[#D4AF37]/10 to-[#D4AF37]/20 border-y border-[#D4AF37]/30 py-3 mb-6 relative overflow-hidden">
+        <div className="flex items-center justify-center gap-3 animate-pulse">
+            <Sparkles size={16} className="text-[#D4AF37]" />
+            <span className="text-[#D4AF37] font-bold text-sm tracking-wider uppercase font-space text-center">
+                Special Offer: Get ₹250 to ₹500 off with Student ID
+            </span>
+            <Sparkles size={16} className="text-[#D4AF37]" />
+        </div>
+    </div>
+);
+
+// Scrolling Offer Marquee - Like GoDaddy style ticker
+const ScrollingOfferMarquee = () => {
+    const offers = [
+        "🎵 Student Discount: ₹250 - ₹500 OFF with Valid ID",
+        "✨ Limited Seats Available - Book Now!",
+        "🎫 Early Bird Discount Ending Soon",
+        "🔥 Premium Experience at 1522, The Pub Sahakar Nagar",
+        "🎶 Folk-Electronica Fusion with Stereo Sutra"
+    ];
+
+    return (
+        <div className="w-full bg-gradient-to-r from-[#D4AF37] via-[#FADA5E] to-[#D4AF37] py-3 overflow-hidden relative">
+            <div className="flex animate-marquee whitespace-nowrap">
+                {[...offers, ...offers, ...offers].map((offer, index) => (
+                    <span key={index} className="text-black font-bold text-sm mx-8 flex items-center gap-2">
+                        {offer}
+                        <span className="mx-4 text-[#8B6914]">•</span>
+                    </span>
+                ))}
+            </div>
+            <style jsx>{`
+                @keyframes marquee {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-33.33%); }
+                }
+                .animate-marquee {
+                    animation: marquee 20s linear infinite;
+                }
+            `}</style>
+        </div>
+    );
+};
+
 // --- Views ---
 
 const HomeView = ({ setView, setSelectedEvent }: any) => {
@@ -246,6 +292,9 @@ const HomeView = ({ setView, setSelectedEvent }: any) => {
                     </div>
                 </button>
             </header>
+
+            {/* Scrolling Offer Ticker */}
+            <ScrollingOfferMarquee />
 
             {/* Single Event Display */}
             <div className="px-6 md:px-8 pb-8 animate-in zoom-in-95 duration-700 delay-300">
@@ -386,9 +435,12 @@ const EventDetailView = ({ selectedEvent, setView }: any) => {
                     </div>
                 </div>
 
-                <p className="text-gray-300 leading-relaxed mb-8 text-sm md:text-base font-inter border-l-2 border-[#D4AF37] pl-4 animate-in slide-in-from-bottom-8 duration-700 delay-200">
+                <p className="text-gray-300 leading-relaxed mb-6 text-sm md:text-base font-inter border-l-2 border-[#D4AF37] pl-4 animate-in slide-in-from-bottom-8 duration-700 delay-200">
                     {selectedEvent.description}
                 </p>
+
+                {/* Offer Banner */}
+                <OfferDetailBanner />
 
                 <div className="grid grid-cols-2 gap-4 mb-8 animate-in slide-in-from-bottom-8 duration-700 delay-300">
                     <div className="bg-white/5 p-4 border border-[#D4AF37]/20 hover:bg-white/10 transition-colors duration-300">
@@ -523,10 +575,13 @@ const EventDetailView = ({ selectedEvent, setView }: any) => {
                 )}
             </div>
 
-            <div className="fixed bottom-24 left-0 right-0 p-6 bg-gradient-to-t from-black via-black to-transparent z-30">
-                <Button onClick={() => setView('checkout')} className="w-full text-lg shadow-xl shadow-[#D4AF37]/20">
-                    Book Access
-                </Button>
+            <div className="fixed bottom-24 left-0 right-0 p-4 md:p-6 bg-gradient-to-t from-black via-black to-transparent z-30">
+                <div className="max-w-md lg:max-w-lg mx-auto">
+                    <Button onClick={() => setView('checkout')} className="w-full text-base md:text-lg shadow-xl shadow-[#D4AF37]/20">
+                        <Ticket size={20} className="mr-2" />
+                        Get Tickets
+                    </Button>
+                </div>
             </div>
         </div>
     );
@@ -834,7 +889,7 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col animate-in slide-in-from-right-8 duration-500 bg-[#050505]">
+        <div className="h-screen flex flex-col animate-in slide-in-from-right-8 duration-500 bg-[#050505]">
             {/* Header */}
             <div className="p-6 flex items-center gap-4 bg-[#050505] z-20 border-b border-[#D4AF37]/10">
                 <button
@@ -849,13 +904,16 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 md:p-8 pb-48">
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 pb-64">
                 <form onSubmit={handlePayment} className="max-w-md mx-auto space-y-6">
                     {error && (
                         <div className="bg-red-900/20 border border-red-500/50 text-red-400 p-4 text-sm">
                             {error}
                         </div>
                     )}
+
+                    {/* Offer Banner */}
+                    <OfferDetailBanner />
 
                     {/* Ticket Selection */}
                     <div>
@@ -922,12 +980,16 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                             />
                         </div>
 
-                        {/* Student ID Upload */}
-                        <div className="pt-4 border-t border-[#D4AF37]/10">
+                        {/* Student ID Upload - Enhanced Offer Visibility */}
+                        <div className="pt-4 border-t border-[#D4AF37]/30 bg-gradient-to-r from-[#D4AF37]/10 via-transparent to-[#D4AF37]/10 -mx-4 px-4 py-4 relative">
+                            <div className="absolute -top-3 right-4 bg-gradient-to-r from-[#D4AF37] to-[#FADA5E] text-black text-[10px] font-bold px-3 py-1 rounded-full tracking-wider uppercase flex items-center gap-1">
+                                <Sparkles size={10} />
+                                Best Value
+                            </div>
                             <label className="block text-[#D4AF37] text-[10px] md:text-xs font-bold uppercase tracking-widest mb-2">
                                 🎓 Student Discount (Optional)
                             </label>
-                            <p className="text-gray-500 text-xs mb-3">Upload your college ID to get ₹250-₹500 off!</p>
+                            <p className="text-gray-400 text-xs mb-3 font-semibold">Get ₹250-₹500 off with a valid college ID! ✨</p>
 
                             <input
                                 type="file"
@@ -1120,6 +1182,9 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                         </Button>
                     )}
                 </form>
+
+                {/* TODO: Add content to this section */}
+                <div className="mt-8 min-h-[200px] bg-[#050505]"></div>
             </div>
         </div>
     );
@@ -1175,10 +1240,10 @@ const SuccessView = ({ selectedEvent, ticketData, setView }: any) => {
 
                     <div className="grid grid-cols-2 gap-3 text-sm mb-4">
                         <div className="flex items-center gap-2 text-gray-600">
-                            <Calendar size={14} /> <span>Dec 6, 2025</span>
+                            <Calendar size={14} /> <span>{selectedEvent?.date || '21 DEC'}</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-600">
-                            <Clock size={14} /> <span>7:00 PM</span>
+                            <Clock size={14} /> <span>{selectedEvent?.time || '8 PM - 12 AM'}</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-600 col-span-2">
                             <MapPin size={14} /> <span>1522, The Pub, Sahakar Nagar</span>
@@ -1198,13 +1263,23 @@ const SuccessView = ({ selectedEvent, ticketData, setView }: any) => {
                 <div className="bg-gray-100 p-5 flex justify-between items-center">
                     <div className="flex flex-col text-left">
                         <span className="text-[10px] text-gray-500 uppercase tracking-widest">Ticket ID</span>
-                        <span className="font-bold text-xl font-mono tracking-wider">{ticketData?.ticket_id || 'PENDING'}</span>
+                        <span className="font-bold text-lg font-mono tracking-wider">{ticketData?.ticket_id || 'PENDING'}</span>
                     </div>
                     <div className="flex flex-col items-center">
-                        <div className="h-12 w-12 bg-black flex items-center justify-center">
-                            <span className="text-[#D4AF37] font-bold text-xs">AAA</span>
-                        </div>
-                        <span className="text-[8px] text-gray-400 mt-1">VERIFIED ✓</span>
+                        {ticketData?.ticket_id ? (
+                            <QRCodeSVG
+                                value={ticketData.ticket_id}
+                                size={64}
+                                bgColor="#f3f4f6"
+                                fgColor="#000000"
+                                level="M"
+                            />
+                        ) : (
+                            <div className="h-16 w-16 bg-black flex items-center justify-center">
+                                <span className="text-[#D4AF37] font-bold text-xs">AAA</span>
+                            </div>
+                        )}
+                        <span className="text-[8px] text-gray-400 mt-1">SCAN FOR ENTRY</span>
                     </div>
                 </div>
             </div>
@@ -1217,9 +1292,12 @@ const SuccessView = ({ selectedEvent, ticketData, setView }: any) => {
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-3 w-full max-w-sm">
-                <Link href="/ticket_cart" className="btn-gold px-6 py-3 flex items-center justify-center text-sm tracking-widest">
+                <button
+                    onClick={() => setView('tickets')}
+                    className="btn-gold px-6 py-3 flex items-center justify-center text-sm tracking-widest"
+                >
                     VIEW MY TICKETS
-                </Link>
+                </button>
                 <Button variant="secondary" onClick={() => {
                     setView('home');
                 }} className="w-full">
@@ -1310,6 +1388,14 @@ const ProfileView = ({ setView }: any) => {
     const [profile, setProfile] = useState({ name: '', email: '', phone: '' });
     const [isEditing, setIsEditing] = useState(false);
     const [editForm, setEditForm] = useState({ name: '', email: '', phone: '' });
+    const [showHelp, setShowHelp] = useState(false);
+
+    // Email verification states
+    const [emailVerificationStep, setEmailVerificationStep] = useState<'idle' | 'sending' | 'verify'>('idle');
+    const [otp, setOtp] = useState('');
+    const [otpError, setOtpError] = useState('');
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [originalEmail, setOriginalEmail] = useState('');
 
     useEffect(() => {
         const saved = localStorage.getItem('userProfile');
@@ -1317,16 +1403,15 @@ const ProfileView = ({ setView }: any) => {
             const parsed = JSON.parse(saved);
             setProfile(parsed);
             setEditForm(parsed);
+            setOriginalEmail(parsed.email || '');
         }
     }, []);
 
     const handleLogout = async () => {
         if (window.confirm('Are you sure you want to log out?')) {
-            // Clear all user data from localStorage
             localStorage.removeItem('userProfile');
             localStorage.removeItem('verifiedEmail');
 
-            // Sign out from Supabase if logged in
             try {
                 const { supabase } = await import('@/lib/supabase');
                 await supabase.auth.signOut();
@@ -1334,25 +1419,101 @@ const ProfileView = ({ setView }: any) => {
                 console.log('No active session to sign out from');
             }
 
-            // Reset profile state
             setProfile({ name: '', email: '', phone: '' });
-
-            // Go back to home view
             setView('home');
         }
     };
 
     const handleEditClick = () => {
         setEditForm(profile);
+        setOriginalEmail(profile.email);
+        setEmailVerificationStep('idle');
+        setOtp('');
+        setOtpError('');
         setIsEditing(true);
     };
 
-    const handleSave = (e: React.FormEvent) => {
-        e.preventDefault();
-        setProfile(editForm);
-        localStorage.setItem('userProfile', JSON.stringify(editForm));
-        setIsEditing(false);
+    const handleSendEmailOtp = async () => {
+        if (!editForm.email || !/\S+@\S+\.\S+/.test(editForm.email)) {
+            setOtpError('Please enter a valid email address');
+            return;
+        }
+
+        setEmailVerificationStep('sending');
+        setOtpError('');
+
+        try {
+            const { supabase } = await import('@/lib/supabase');
+            const { error } = await supabase.auth.signInWithOtp({
+                email: editForm.email,
+                options: { shouldCreateUser: true }
+            });
+
+            if (error) throw error;
+            setEmailVerificationStep('verify');
+        } catch (err: any) {
+            setOtpError(err.message || 'Failed to send OTP');
+            setEmailVerificationStep('idle');
+        }
     };
+
+    const handleVerifyEmailOtp = async () => {
+        if (otp.length !== 8) {
+            setOtpError('Please enter the 8-digit OTP sent to your email');
+            return;
+        }
+
+        setIsVerifying(true);
+        setOtpError('');
+
+        try {
+            const { supabase } = await import('@/lib/supabase');
+            const { error } = await supabase.auth.verifyOtp({
+                email: editForm.email,
+                token: otp,
+                type: 'email'
+            });
+
+            if (error) throw error;
+
+            // Email verified - save profile
+            const newProfile = { ...editForm };
+            setProfile(newProfile);
+            localStorage.setItem('userProfile', JSON.stringify(newProfile));
+            localStorage.setItem('verifiedEmail', editForm.email);
+
+            setIsEditing(false);
+            setEmailVerificationStep('idle');
+            setOtp('');
+        } catch (err: any) {
+            setOtpError(err.message || 'Invalid OTP. Please try again.');
+        } finally {
+            setIsVerifying(false);
+        }
+    };
+
+    const handleSave = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // If email changed, require verification
+        if (editForm.email !== originalEmail && editForm.email) {
+            if (emailVerificationStep === 'idle') {
+                await handleSendEmailOtp();
+                return;
+            } else if (emailVerificationStep === 'verify') {
+                await handleVerifyEmailOtp();
+                return;
+            }
+        } else {
+            // Email not changed, save directly
+            const newProfile = { ...editForm };
+            setProfile(newProfile);
+            localStorage.setItem('userProfile', JSON.stringify(newProfile));
+            setIsEditing(false);
+        }
+    };
+
+    const emailChanged = editForm.email !== originalEmail && editForm.email;
 
     return (
         <div className="min-h-screen pb-24 animate-in fade-in duration-500">
@@ -1369,8 +1530,8 @@ const ProfileView = ({ setView }: any) => {
                                 <Users size={32} />
                             </div>
                             <div className="relative z-10">
-                                <h3 className="text-white font-bold text-xl mb-1 font-playfair">{profile.name}</h3>
-                                <p className="text-[#D4AF37] text-sm tracking-wide mb-1">{profile.email}</p>
+                                <h3 className="text-white font-bold text-xl mb-1 font-playfair">{profile.name || 'Guest'}</h3>
+                                <p className="text-[#D4AF37] text-sm tracking-wide mb-1">{profile.email || 'No email set'}</p>
                                 {profile.phone && <p className="text-gray-500 text-xs font-mono">{profile.phone}</p>}
                             </div>
                         </div>
@@ -1382,6 +1543,14 @@ const ProfileView = ({ setView }: any) => {
                             >
                                 <span className="text-gray-300 group-hover:text-white transition-colors">Edit Profile</span>
                                 <ChevronLeft className="rotate-180 text-gray-500 group-hover:text-[#D4AF37] transition-colors" size={20} />
+                            </button>
+
+                            <button
+                                onClick={() => setShowHelp(true)}
+                                className="w-full flex items-center justify-between p-4 bg-white/5 border border-[#D4AF37]/10 hover:border-[#D4AF37]/30 transition-all group"
+                            >
+                                <span className="text-gray-300 group-hover:text-white transition-colors">How It Works</span>
+                                <Info className="text-gray-500 group-hover:text-[#D4AF37] transition-colors" size={20} />
                             </button>
                         </div>
 
@@ -1410,23 +1579,58 @@ const ProfileView = ({ setView }: any) => {
                                 />
                             </div>
                             <div className="group">
-                                <label className="block text-[#D4AF37] text-[10px] font-bold uppercase tracking-widest mb-2">Email Address</label>
+                                <label className="block text-[#D4AF37] text-[10px] font-bold uppercase tracking-widest mb-2">
+                                    Email Address
+                                    {emailChanged && <span className="text-yellow-500 ml-2">(verification required)</span>}
+                                </label>
                                 <input
                                     type="email"
                                     required
                                     value={editForm.email}
-                                    onChange={e => setEditForm({ ...editForm, email: e.target.value })}
-                                    className="input-premium w-full bg-white/5 border border-[#D4AF37]/30 p-4 text-white focus:outline-none focus:border-[#D4AF37] transition-all"
+                                    onChange={e => {
+                                        setEditForm({ ...editForm, email: e.target.value });
+                                        setEmailVerificationStep('idle');
+                                        setOtp('');
+                                    }}
+                                    disabled={emailVerificationStep === 'verify'}
+                                    className="input-premium w-full bg-white/5 border border-[#D4AF37]/30 p-4 text-white focus:outline-none focus:border-[#D4AF37] transition-all disabled:opacity-50"
                                 />
                             </div>
+
+                            {/* OTP Input - shown when verifying */}
+                            {emailVerificationStep === 'verify' && (
+                                <div className="group animate-in slide-in-from-bottom-4 duration-300">
+                                    <label className="block text-[#D4AF37] text-[10px] font-bold uppercase tracking-widest mb-2">Enter 8-Digit OTP</label>
+                                    <input
+                                        type="text"
+                                        maxLength={8}
+                                        value={otp}
+                                        onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
+                                        placeholder="Enter OTP from email"
+                                        className="input-premium w-full bg-white/5 border border-[#D4AF37]/30 p-4 text-white text-center text-2xl tracking-[0.5em] font-mono focus:outline-none focus:border-[#D4AF37] transition-all"
+                                    />
+                                    <p className="text-gray-500 text-xs mt-2">Check your email for the 8-digit verification code</p>
+                                </div>
+                            )}
+
+                            {otpError && (
+                                <p className="text-red-400 text-sm">{otpError}</p>
+                            )}
                         </div>
 
                         <div className="flex gap-4">
-                            <Button variant="outline" onClick={() => setIsEditing(false)} className="flex-1">
+                            <Button variant="outline" onClick={() => {
+                                setIsEditing(false);
+                                setEmailVerificationStep('idle');
+                                setOtp('');
+                                setOtpError('');
+                            }} className="flex-1">
                                 Cancel
                             </Button>
-                            <Button type="submit" className="flex-1">
-                                Save Changes
+                            <Button type="submit" disabled={isVerifying || emailVerificationStep === 'sending'} className="flex-1">
+                                {emailVerificationStep === 'sending' ? 'Sending OTP...' :
+                                    emailVerificationStep === 'verify' ? 'Verify & Save' :
+                                        emailChanged ? 'Verify Email' : 'Save Changes'}
                             </Button>
                         </div>
                     </form>
@@ -1448,6 +1652,94 @@ const ProfileView = ({ setView }: any) => {
                     </div>
                 )}
             </div>
+
+            {/* How It Works Modal */}
+            {showHelp && (
+                <div
+                    className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-300"
+                    onClick={() => setShowHelp(false)}
+                >
+                    <div
+                        className="bg-[#0a0a0a] border border-[#D4AF37]/30 max-w-md w-full max-h-[80vh] overflow-y-auto"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div className="p-4 border-b border-[#D4AF37]/20 flex justify-between items-center sticky top-0 bg-[#0a0a0a]">
+                            <h3 className="text-[#D4AF37] font-bold font-playfair">How It Works</h3>
+                            <button onClick={() => setShowHelp(false)} className="text-gray-500 hover:text-white">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className="p-4 space-y-6 text-sm">
+                            {/* Booking Flow */}
+                            <div>
+                                <h4 className="text-[#D4AF37] font-bold mb-3 uppercase tracking-wider text-xs">🎫 Booking a Ticket</h4>
+                                <div className="space-y-2 text-gray-400">
+                                    <div className="flex items-start gap-3">
+                                        <span className="text-[#D4AF37] font-bold">1.</span>
+                                        <span>Tap on the event poster to view details</span>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <span className="text-[#D4AF37] font-bold">2.</span>
+                                        <span>Click "Get Tickets" and select your ticket type</span>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <span className="text-[#D4AF37] font-bold">3.</span>
+                                        <span>Enter your details and verify email with OTP</span>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <span className="text-[#D4AF37] font-bold">4.</span>
+                                        <span>Complete payment via Razorpay</span>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <span className="text-[#D4AF37] font-bold">5.</span>
+                                        <span>Ticket with QR code is generated instantly!</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* View Tickets */}
+                            <div>
+                                <h4 className="text-[#D4AF37] font-bold mb-3 uppercase tracking-wider text-xs">📱 Viewing Your Tickets</h4>
+                                <div className="space-y-2 text-gray-400">
+                                    <p>After booking, your tickets appear in the <strong className="text-white">Tickets</strong> tab (bottom navigation).</p>
+                                    <p>Each ticket shows a unique QR code for entry.</p>
+                                </div>
+                            </div>
+
+                            {/* After Logout */}
+                            <div>
+                                <h4 className="text-[#D4AF37] font-bold mb-3 uppercase tracking-wider text-xs">🔐 After Logging Out</h4>
+                                <div className="space-y-2 text-gray-400">
+                                    <div className="flex items-start gap-3">
+                                        <span className="text-[#D4AF37] font-bold">1.</span>
+                                        <span>Go to Profile → Edit Profile</span>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <span className="text-[#D4AF37] font-bold">2.</span>
+                                        <span>Enter the email used for booking</span>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <span className="text-[#D4AF37] font-bold">3.</span>
+                                        <span>Verify with OTP sent to that email</span>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <span className="text-[#D4AF37] font-bold">4.</span>
+                                        <span>Your tickets are restored in the Tickets tab!</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Security Note */}
+                            <div className="bg-[#D4AF37]/10 p-3 border-l-2 border-[#D4AF37]">
+                                <p className="text-[#D4AF37] text-xs">
+                                    <strong>🔒 Security:</strong> Email verification ensures only you can access your tickets. We never share your data.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
