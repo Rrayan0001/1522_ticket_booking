@@ -1289,7 +1289,7 @@ const TicketsView = ({ setView }: any) => {
                     <div className="text-center py-20">
                         <Ticket size={48} className="mx-auto text-gray-600 mb-4" />
                         <p className="text-gray-400 text-lg mb-6 tracking-wide">No active tickets found</p>
-                        <Button onClick={() => setView('home')}>
+                        <Button onClick={() => setView('checkout')}>
                             BOOK NOW
                         </Button>
                     </div>
@@ -1319,12 +1319,25 @@ const ProfileView = ({ setView }: any) => {
         }
     }, []);
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         if (window.confirm('Are you sure you want to log out?')) {
+            // Clear all user data from localStorage
             localStorage.removeItem('userProfile');
+            localStorage.removeItem('verifiedEmail');
+
+            // Sign out from Supabase if logged in
+            try {
+                const { supabase } = await import('@/lib/supabase');
+                await supabase.auth.signOut();
+            } catch (e) {
+                console.log('No active session to sign out from');
+            }
+
+            // Reset profile state
             setProfile({ name: '', email: '', phone: '' });
-            // Redirect to login page
-            window.location.href = '/auth/customer';
+
+            // Go back to home view
+            setView('home');
         }
     };
 
@@ -1595,8 +1608,12 @@ const OrganizerView = ({ setView }: any) => (
 import { FileText, ListChecks, RefreshCcw, MessageCircle, Phone, Mail } from 'lucide-react';
 // --- Main Application ---
 
-const EventBookingApp = () => {
-    const [view, setView] = useState('home'); // Start at home view with poster
+interface EventBookingAppProps {
+    initialView?: string;
+}
+
+const EventBookingApp = ({ initialView = 'home' }: EventBookingAppProps) => {
+    const [view, setView] = useState(initialView); // Start at the specified view
     const [selectedEvent, setSelectedEvent] = useState<any>(EVENTS[0]); // Default to first event
     const [ticketData, setTicketData] = useState<any>(null);
 
