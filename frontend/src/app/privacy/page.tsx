@@ -79,7 +79,7 @@ export default function PrivacyPage() {
                             For privacy-related inquiries, contact us at:
                         </p>
                         <div className="mt-3 p-4 bg-white/5 border border-[#D4AF37]/20 rounded-lg">
-                            <p><strong>Email:</strong> psriniva1@gmail.com</p>
+                            <p><strong>Email:</strong> anaudioaffair@gmail.com</p>
                         </div>
                     </section>
                 </div>

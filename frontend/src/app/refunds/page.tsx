@@ -90,7 +90,7 @@ export default function RefundPolicyPage() {
                         </h2>
                         <p className="mb-3">For eligible refund requests, please contact us:</p>
                         <div className="p-4 bg-white/5 border border-[#D4AF37]/20 rounded-lg">
-                            <p><strong>Email:</strong> psriniva1@gmail.com</p>
+                            <p><strong>Email:</strong> anaudioaffair@gmail.com</p>
                             <p><strong>Phone:</strong> +91 99864 93391</p>
                             <p className="mt-2 text-sm text-gray-400">Include your booking ID, ticket number, and reason for refund request.</p>
                         </div>

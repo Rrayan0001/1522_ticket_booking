@@ -96,7 +96,7 @@ export default function TermsPage() {
                             For questions or concerns regarding these terms, please contact us at:
                         </p>
                         <div className="mt-3 p-4 bg-white/5 border border-[#D4AF37]/20 rounded-lg">
-                            <p><strong>Email:</strong> psriniva1@gmail.com</p>
+                            <p><strong>Email:</strong> anaudioaffair@gmail.com</p>
                             <p><strong>Phone:</strong> +91 99864 93391</p>
                             <p><strong>Address:</strong> 1522, Sahakaranagar, Bangalore</p>
                         </div>

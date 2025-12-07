@@ -12,36 +12,6 @@ export default function ContactPage() {
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2 mb-12">
-                    {/* Location Card */}
-                    <div className="p-6 bg-white/5 border border-[#D4AF37]/20 rounded-lg">
-                        <div className="w-12 h-12 rounded-full bg-[#D4AF37]/20 flex items-center justify-center mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#D4AF37]">
-                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                                <circle cx="12" cy="10" r="3" />
-                            </svg>
-                        </div>
-                        <h3 className="text-xl font-bold text-white mb-2 font-playfair">Visit Us</h3>
-                        <p className="text-gray-400">
-                            1522, The Pub<br />
-                            Sahakar Nagar<br />
-                            Bangalore, Karnataka 560092
-                        </p>
-                    </div>
-
-                    {/* Phone Card */}
-                    <div className="p-6 bg-white/5 border border-[#D4AF37]/20 rounded-lg">
-                        <div className="w-12 h-12 rounded-full bg-[#D4AF37]/20 flex items-center justify-center mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#D4AF37]">
-                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                            </svg>
-                        </div>
-                        <h3 className="text-xl font-bold text-white mb-2 font-playfair">Call Us</h3>
-                        <p className="text-gray-400">
-                            +91 99864 93391<br />
-                            <span className="text-sm">Mon - Sun: 12 PM - 12 AM</span>
-                        </p>
-                    </div>
-
                     {/* Email Card */}
                     <div className="p-6 bg-white/5 border border-[#D4AF37]/20 rounded-lg">
                         <div className="w-12 h-12 rounded-full bg-[#D4AF37]/20 flex items-center justify-center mb-4">
@@ -51,10 +21,10 @@ export default function ContactPage() {
                             </svg>
                         </div>
                         <h3 className="text-xl font-bold text-white mb-2 font-playfair">Email Us</h3>
-                        <p className="text-gray-400">
-                            psriniva1@gmail.com<br />
-                            <span className="text-sm">We reply within 24 hours</span>
-                        </p>
+                        <a href="mailto:anaudioaffair@gmail.com" className="text-[#D4AF37] hover:underline">
+                            anaudioaffair@gmail.com
+                        </a>
+                        <p className="text-gray-500 text-sm mt-2">We reply within 24 hours</p>
                     </div>
 
                     {/* Instagram Card */}
@@ -70,15 +40,7 @@ export default function ContactPage() {
                         <a href="https://www.instagram.com/anaudioaffair/" target="_blank" rel="noopener noreferrer" className="text-[#C21E56] hover:underline">
                             @anaudioaffair
                         </a>
-                    </div>
-                </div>
-
-                <div className="p-6 bg-gradient-to-r from-[#D4AF37]/10 to-transparent border border-[#D4AF37]/20 rounded-lg mb-8">
-                    <h3 className="text-xl font-bold text-[#D4AF37] mb-4 font-playfair">Business Information</h3>
-                    <div className="space-y-2 text-gray-300">
-                        <p><strong>Business Name:</strong> 1522, The Pub</p>
-                        <p><strong>GSTIN:</strong> [Your GSTIN if applicable]</p>
-                        <p><strong>Business Type:</strong> Restaurant & Event Venue</p>
+                        <p className="text-gray-500 text-sm mt-2">DM us for quick responses</p>
                     </div>
                 </div>
 
@@ -86,3 +48,4 @@ export default function ContactPage() {
         </div>
     );
 }
+

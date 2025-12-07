@@ -78,7 +78,7 @@ export default function ShippingPolicyPage() {
                         </h2>
                         <p className="mb-3">If you're having trouble accessing your digital ticket, contact us:</p>
                         <div className="p-4 bg-white/5 border border-[#D4AF37]/20 rounded-lg">
-                            <p><strong>Email:</strong> psriniva1@gmail.com</p>
+                            <p><strong>Email:</strong> anaudioaffair@gmail.com</p>
                             <p><strong>Phone:</strong> +91 99864 93391</p>
                         </div>
                     </section>

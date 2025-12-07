@@ -104,8 +104,8 @@ const TICKET_TYPES: any = {
         label: 'Stereo Sutra – Spirits Pass (Unlimited Food + Unlimited IMFL)'
     },
     'ELITE': {
-        basePrice: 5000,
-        price: Math.round(5000 * (1 + GST_RATE)), // 5900 with GST
+        basePrice: 4000,
+        price: Math.round(4000 * (1 + GST_RATE)), // 4720 with GST
         label: 'Stereo Sutra – Elite Pass (Unlimited Food + Unlimited Premium Liquor)'
     }
 };
@@ -594,6 +594,7 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
         email: ''
     });
     const [ticketType, setTicketType] = useState<keyof typeof TICKET_TYPES>('BREW');
+    const [ticketQuantity, setTicketQuantity] = useState(1);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState('');
 
@@ -617,18 +618,23 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
     } | null>(null);
     const [studentError, setStudentError] = useState('');
 
-    // Calculate discount based on ticket type
-    const getDiscount = (type: keyof typeof TICKET_TYPES) => {
+    // Calculate discount per ticket based on ticket type
+    const getDiscountPerTicket = (type: keyof typeof TICKET_TYPES) => {
         if (!studentDiscount?.isEligible) return 0;
-        // BREW (₹2500) gets ₹500 off, SPIRITS (₹3000) and ELITE (₹5000) get ₹250 off
+        // BREW (₹2500) gets ₹500 off per ticket, SPIRITS and ELITE get ₹250 off per ticket
         if (type === 'BREW') return 500;
         return 250; // SPIRITS and ELITE
     };
 
+    // Total discount for all tickets
+    const getTotalDiscount = () => {
+        return getDiscountPerTicket(ticketType) * ticketQuantity;
+    };
+
     const getFinalPrice = () => {
-        const basePrice = TICKET_TYPES[ticketType].price;
-        const discount = getDiscount(ticketType);
-        return basePrice - discount;
+        const pricePerTicket = TICKET_TYPES[ticketType].price;
+        const discountPerTicket = getDiscountPerTicket(ticketType);
+        return (pricePerTicket - discountPerTicket) * ticketQuantity;
     };
 
     useEffect(() => {
@@ -802,6 +808,7 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                 body: JSON.stringify({
                     amount: finalAmount,
                     ticket_type: ticketType,
+                    quantity: ticketQuantity,
                     customer_name: formData.name,
                     customer_phone: formData.phone,
                     customer_email: formData.email
@@ -820,7 +827,7 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                 amount: orderData.amount,
                 currency: orderData.currency,
                 name: 'An Audio Affair',
-                description: TICKET_TYPES[ticketType].label + (studentDiscount?.isEligible ? ' (Student Discount Applied)' : ''),
+                description: `${ticketQuantity}x ${TICKET_TYPES[ticketType].label}${studentDiscount?.isEligible ? ' (Student Discount Applied)' : ''}`,
                 order_id: orderData.order_id,
                 prefill: {
                     name: formData.name,
@@ -844,6 +851,7 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                                 customer_phone: formData.phone,
                                 customer_email: formData.email,
                                 ticket_type: ticketType,
+                                quantity: ticketQuantity,
                                 price: finalAmount
                             })
                         });
@@ -851,11 +859,14 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                         const verifyData = await verifyRes.json();
 
                         if (verifyRes.ok && verifyData.success) {
-                            setTicketData(verifyData.ticket);
+                            // Handle both single ticket (legacy) and multiple tickets
+                            const tickets = verifyData.tickets || [verifyData.ticket];
+                            setTicketData({ tickets, totalPrice: finalAmount, quantity: ticketQuantity });
 
-                            // Save to localStorage
+                            // Save all ticket IDs to localStorage
                             const stored = JSON.parse(localStorage.getItem('tickets') || '[]');
-                            localStorage.setItem('tickets', JSON.stringify([...stored, verifyData.ticket.ticket_id]));
+                            const newTicketIds = tickets.map((t: any) => t.ticket_id);
+                            localStorage.setItem('tickets', JSON.stringify([...stored, ...newTicketIds]));
 
                             setView('success');
                         } else {
@@ -937,6 +948,31 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                                     </div>
                                 </button>
                             ))}
+                        </div>
+                    </div>
+
+                    {/* Ticket Quantity Selector */}
+                    <div>
+                        <label className="block text-[#D4AF37] text-xs font-bold uppercase tracking-widest mb-2">Number of Tickets</label>
+                        <div className="flex items-center gap-4">
+                            <button
+                                type="button"
+                                onClick={() => setTicketQuantity(Math.max(1, ticketQuantity - 1))}
+                                disabled={ticketQuantity <= 1}
+                                className="w-12 h-12 flex items-center justify-center bg-white/5 border border-[#D4AF37]/20 text-white text-xl font-bold hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                            >
+                                −
+                            </button>
+                            <span className="text-white text-2xl font-bold font-mono min-w-[3rem] text-center">{ticketQuantity}</span>
+                            <button
+                                type="button"
+                                onClick={() => setTicketQuantity(Math.min(10, ticketQuantity + 1))}
+                                disabled={ticketQuantity >= 10}
+                                className="w-12 h-12 flex items-center justify-center bg-white/5 border border-[#D4AF37]/20 text-white text-xl font-bold hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                            >
+                                +
+                            </button>
+                            <span className="text-gray-400 text-sm">Max 10 tickets per booking</span>
                         </div>
                     </div>
 
@@ -1057,13 +1093,21 @@ const CheckoutView = ({ setView, setTicketData }: any) => {
                                 <span className="text-white">{String(ticketType)}</span>
                             </div>
                             <div className="flex justify-between text-gray-400">
-                                <span>Original Price</span>
+                                <span>Quantity</span>
+                                <span className="text-white">{ticketQuantity} ticket{ticketQuantity > 1 ? 's' : ''}</span>
+                            </div>
+                            <div className="flex justify-between text-gray-400">
+                                <span>Price per Ticket</span>
                                 <span className="text-white">₹{TICKET_TYPES[ticketType].price}</span>
+                            </div>
+                            <div className="flex justify-between text-gray-400">
+                                <span>Subtotal</span>
+                                <span className="text-white">₹{TICKET_TYPES[ticketType].price * ticketQuantity}</span>
                             </div>
                             {studentDiscount?.isEligible && (
                                 <div className="flex justify-between text-green-400">
-                                    <span>🎓 Student Discount</span>
-                                    <span>-₹{getDiscount(ticketType)}</span>
+                                    <span>🎓 Student Discount ({ticketQuantity} × ₹{getDiscountPerTicket(ticketType)})</span>
+                                    <span>-₹{getTotalDiscount()}</span>
                                 </div>
                             )}
                             <div className="flex justify-between pt-2 border-t border-white/10">
@@ -1205,93 +1249,123 @@ const FUNKY_QUOTES = [
 const SuccessView = ({ selectedEvent, ticketData, setView }: any) => {
     const randomQuote = FUNKY_QUOTES[Math.floor(Math.random() * FUNKY_QUOTES.length)];
 
+    // Handle both new format (tickets array) and old format (single ticket)
+    const tickets = ticketData?.tickets || (ticketData?.ticket_id ? [ticketData] : []);
+    const totalPrice = ticketData?.totalPrice || ticketData?.price || 0;
+    const quantity = ticketData?.quantity || tickets.length || 1;
+
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-in zoom-in-95 duration-500 bg-[#050505]">
+        <div className="min-h-screen flex flex-col items-center p-6 text-center animate-in zoom-in-95 duration-500 bg-[#050505] overflow-y-auto">
             {/* Success Icon */}
-            <div className="w-24 h-24 rounded-full flex items-center justify-center border-2 border-[#D4AF37] shadow-[0_0_50px_rgba(212,175,55,0.3)] mb-6 animate-pulse">
-                <CheckCircle2 size={48} className="text-[#D4AF37]" />
+            <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 border-[#D4AF37] shadow-[0_0_50px_rgba(212,175,55,0.3)] mb-4 mt-4 animate-pulse">
+                <CheckCircle2 size={40} className="text-[#D4AF37]" />
             </div>
 
-            <h2 className="text-3xl font-bold text-[#D4AF37] mb-2 font-playfair">Booking Confirmed!</h2>
-            <p className="text-gray-400 mb-4 max-w-xs mx-auto">Your ticket for <span className="text-white font-semibold">{selectedEvent?.title || 'Stereo Sutra'}</span> has been created.</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#D4AF37] mb-2 font-playfair">
+                {quantity > 1 ? `${quantity} Tickets Booked!` : 'Booking Confirmed!'}
+            </h2>
+            <p className="text-gray-400 mb-4 max-w-xs mx-auto text-sm">
+                {quantity > 1
+                    ? `Your ${quantity} tickets for `
+                    : 'Your ticket for '}
+                <span className="text-white font-semibold">{selectedEvent?.title || 'Stereo Sutra'}</span>
+                {quantity > 1 ? ' have been created.' : ' has been created.'}
+            </p>
 
             {/* Funky Quote */}
-            <div className="bg-gradient-to-r from-[#D4AF37]/10 via-[#D4AF37]/20 to-[#D4AF37]/10 p-4 mb-6 border-l-4 border-[#D4AF37] max-w-sm">
-                <p className="text-[#D4AF37] text-sm italic">{randomQuote}</p>
+            <div className="bg-gradient-to-r from-[#D4AF37]/10 via-[#D4AF37]/20 to-[#D4AF37]/10 p-3 mb-4 border-l-4 border-[#D4AF37] max-w-sm">
+                <p className="text-[#D4AF37] text-xs italic">{randomQuote}</p>
             </div>
 
-            {/* Ticket Card */}
-            <div className="bg-white text-black w-full max-w-sm overflow-hidden shadow-2xl relative mb-6">
-                {/* Tear Line Effect */}
-                <div className="absolute top-[65%] left-0 w-4 h-4 bg-[#050505] rounded-r-full -ml-2"></div>
-                <div className="absolute top-[65%] right-0 w-4 h-4 bg-[#050505] rounded-l-full -mr-2"></div>
-                <div className="absolute top-[65%] left-4 right-4 border-t-2 border-dashed border-gray-300"></div>
-
-                <div className="p-5">
-                    <div className="flex justify-between items-start mb-4">
-                        <div>
-                            <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">An Audio Affair Presents</p>
-                            <h3 className="font-bold text-xl font-playfair">{selectedEvent?.title || 'Stereo Sutra'}</h3>
-                        </div>
-                        <div className="bg-[#D4AF37] text-black px-2 py-1 text-xs font-bold">
-                            {ticketData?.ticket_type || 'ENTRY'}
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 text-sm mb-4">
-                        <div className="flex items-center gap-2 text-gray-600">
-                            <Calendar size={14} /> <span>{selectedEvent?.date || '21 DEC'}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-600">
-                            <Clock size={14} /> <span>{selectedEvent?.time || '8 PM - 12 AM'}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-600 col-span-2">
-                            <MapPin size={14} /> <span>1522, The Pub, Sahakar Nagar</span>
-                        </div>
-                    </div>
-
-                    <div className="bg-gray-100 p-3 text-xs text-gray-500 mb-3">
-                        <p className="font-semibold text-gray-700 mb-1">📋 Entry Instructions:</p>
-                        <ul className="space-y-1 list-disc list-inside">
-                            <li>Show this ticket at the entrance</li>
-                            <li>Carry a valid photo ID</li>
-                            <li>Entry for 21+ only</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div className="bg-gray-100 p-5 flex justify-between items-center">
-                    <div className="flex flex-col text-left">
-                        <span className="text-[10px] text-gray-500 uppercase tracking-widest">Ticket ID</span>
-                        <span className="font-bold text-lg font-mono tracking-wider">{ticketData?.ticket_id || 'PENDING'}</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                        {ticketData?.ticket_id ? (
-                            <QRCodeSVG
-                                value={ticketData.ticket_id}
-                                size={64}
-                                bgColor="#f3f4f6"
-                                fgColor="#000000"
-                                level="M"
-                            />
-                        ) : (
-                            <div className="h-16 w-16 bg-black flex items-center justify-center">
-                                <span className="text-[#D4AF37] font-bold text-xs">AAA</span>
+            {/* Ticket Cards - Scrollable if multiple */}
+            <div className={`w-full max-w-sm ${quantity > 1 ? 'max-h-[45vh] overflow-y-auto space-y-4 pr-2' : ''}`}>
+                {tickets.map((ticket: any, index: number) => (
+                    <div key={ticket.ticket_id || index} className="bg-white text-black w-full overflow-hidden shadow-2xl relative">
+                        {/* Ticket Number Badge for multiple tickets */}
+                        {quantity > 1 && (
+                            <div className="absolute top-2 left-2 bg-black text-[#D4AF37] px-2 py-1 text-xs font-bold rounded-sm">
+                                Ticket {index + 1}/{quantity}
                             </div>
                         )}
-                        <span className="text-[8px] text-gray-400 mt-1">SCAN FOR ENTRY</span>
+
+                        {/* Tear Line Effect */}
+                        <div className="absolute top-[55%] left-0 w-4 h-4 bg-[#050505] rounded-r-full -ml-2"></div>
+                        <div className="absolute top-[55%] right-0 w-4 h-4 bg-[#050505] rounded-l-full -mr-2"></div>
+                        <div className="absolute top-[55%] left-4 right-4 border-t-2 border-dashed border-gray-300"></div>
+
+                        <div className="p-4 pt-8">
+                            <div className="flex justify-between items-start mb-3">
+                                <div>
+                                    <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">An Audio Affair Presents</p>
+                                    <h3 className="font-bold text-lg font-playfair">{selectedEvent?.title || 'Stereo Sutra'}</h3>
+                                </div>
+                                <div className="bg-[#D4AF37] text-black px-2 py-1 text-xs font-bold">
+                                    {ticket.ticket_type || 'ENTRY'}
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                                <div className="flex items-center gap-1 text-gray-600">
+                                    <Calendar size={12} /> <span>{selectedEvent?.date || '21 DEC'}</span>
+                                </div>
+                                <div className="flex items-center gap-1 text-gray-600">
+                                    <Clock size={12} /> <span>{selectedEvent?.time || '8 PM - 12 AM'}</span>
+                                </div>
+                                <div className="flex items-center gap-1 text-gray-600 col-span-2">
+                                    <MapPin size={12} /> <span>1522, The Pub, Sahakar Nagar</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-gray-100 p-4 flex justify-between items-center">
+                            <div className="flex flex-col text-left">
+                                <span className="text-[9px] text-gray-500 uppercase tracking-widest">Ticket ID</span>
+                                <span className="font-bold text-sm font-mono tracking-wider">{ticket.ticket_id || 'PENDING'}</span>
+                            </div>
+                            <div className="flex flex-col items-center">
+                                {ticket.ticket_id ? (
+                                    <QRCodeSVG
+                                        value={ticket.ticket_id}
+                                        size={56}
+                                        bgColor="#f3f4f6"
+                                        fgColor="#000000"
+                                        level="M"
+                                    />
+                                ) : (
+                                    <div className="h-14 w-14 bg-black flex items-center justify-center">
+                                        <span className="text-[#D4AF37] font-bold text-xs">AAA</span>
+                                    </div>
+                                )}
+                                <span className="text-[7px] text-gray-400 mt-1">SCAN FOR ENTRY</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                ))}
+            </div>
+
+            {/* Entry Instructions - Shown once for all tickets */}
+            <div className="bg-gray-800/50 p-3 text-xs text-gray-400 my-4 w-full max-w-sm border border-gray-700">
+                <p className="font-semibold text-gray-300 mb-1">📋 Entry Instructions:</p>
+                <ul className="space-y-1 list-disc list-inside text-left">
+                    <li>Each guest must show their own ticket</li>
+                    <li>Carry valid photo ID for all guests</li>
+                    <li>Entry for 21+ only</li>
+                </ul>
             </div>
 
             {/* Payment Info */}
-            <div className="bg-green-900/20 border border-green-500/30 p-3 mb-6 w-full max-w-sm text-left">
+            <div className="bg-green-900/20 border border-green-500/30 p-3 mb-4 w-full max-w-sm text-left">
                 <p className="text-green-400 text-sm font-semibold">✓ Payment Successful</p>
-                <p className="text-green-300/70 text-xs mt-1">Amount paid: ₹{ticketData?.price || 'N/A'}</p>
+                <p className="text-green-300/70 text-xs mt-1">
+                    {quantity > 1
+                        ? `Total paid: ₹${totalPrice} for ${quantity} tickets`
+                        : `Amount paid: ₹${totalPrice}`
+                    }
+                </p>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-3 w-full max-w-sm">
+            <div className="flex flex-col gap-3 w-full max-w-sm pb-6">
                 <button
                     onClick={() => setView('tickets')}
                     className="btn-gold px-6 py-3 flex items-center justify-center text-sm tracking-widest"
@@ -1306,7 +1380,7 @@ const SuccessView = ({ selectedEvent, ticketData, setView }: any) => {
             </div>
 
             {/* Footer Note */}
-            <p className="text-gray-500 text-xs mt-6 max-w-sm">
+            <p className="text-gray-500 text-xs mb-6 max-w-sm">
                 A confirmation has been sent to your email. See you at the event! 🎉
             </p>
         </div>
@@ -1890,7 +1964,7 @@ const OrganizerView = ({ setView }: any) => (
                 </div>
                 <h3 className="text-white font-bold text-lg mb-2">Email Us</h3>
                 <p className="text-gray-400 text-sm mb-6">Send us your queries and we'll get back to you.</p>
-                <a href="mailto:psriniva1@gmail.com" className="btn-gold w-full py-3 block">
+                <a href="mailto:anaudioaffair@gmail.com" className="btn-gold w-full py-3 block">
                     SEND EMAIL
                 </a>
             </div>

@@ -15,7 +15,7 @@ const razorpay = new Razorpay({
 // Create Order
 router.post('/create-order', async (req, res) => {
     try {
-        const { amount, ticket_type, customer_name, customer_phone, customer_email } = req.body;
+        const { amount, ticket_type, quantity = 1, customer_name, customer_phone, customer_email } = req.body;
 
         if (!amount || !ticket_type) {
             return res.status(400).json({ error: 'Amount and ticket type are required' });
@@ -27,6 +27,7 @@ router.post('/create-order', async (req, res) => {
             receipt: `receipt_${Date.now()}`,
             notes: {
                 ticket_type,
+                quantity: String(quantity),
                 customer_name,
                 customer_phone,
                 customer_email
@@ -48,7 +49,7 @@ router.post('/create-order', async (req, res) => {
     }
 });
 
-// Verify Payment and Create Ticket
+// Verify Payment and Create Ticket(s)
 router.post('/verify-payment', async (req, res) => {
     try {
         const {
@@ -59,10 +60,11 @@ router.post('/verify-payment', async (req, res) => {
             customer_phone,
             customer_email,
             ticket_type,
+            quantity = 1,
             price
         } = req.body;
 
-        console.log('Verifying payment:', { razorpay_order_id, razorpay_payment_id, ticket_type, price });
+        console.log('Verifying payment:', { razorpay_order_id, razorpay_payment_id, ticket_type, quantity, price });
 
         // Verify signature
         const body = razorpay_order_id + '|' + razorpay_payment_id;
@@ -79,43 +81,52 @@ router.post('/verify-payment', async (req, res) => {
             });
         }
 
-        // Payment verified - Create ticket
-        const ticket_id = uuidv4().slice(0, 8).toUpperCase();
+        // Payment verified - Create ticket(s)
+        const pricePerTicket = Math.round(parseInt(price) / quantity);
+        const tickets = [];
 
-        // Insert ticket with Razorpay payment info as screenshot_url placeholder
-        const { data, error } = await supabase
-            .from('tickets')
-            .insert([
-                {
-                    ticket_id,
-                    name: customer_name,
-                    phone: customer_phone,
-                    email: customer_email,
-                    ticket_type: ticket_type, // Store as text
-                    price: parseInt(price),
-                    screenshot_url: `razorpay://${razorpay_payment_id}`, // Use payment ID as reference
-                    utr_number: razorpay_order_id, // Store order_id in utr_number field
-                    status: 'VERIFIED' // Use VERIFIED instead of CONFIRMED (matches enum)
-                }
-            ])
-            .select()
-            .single();
+        for (let i = 0; i < quantity; i++) {
+            const ticket_id = uuidv4().slice(0, 8).toUpperCase();
 
-        if (error) {
-            console.error('DB Insert Error:', error);
-            return res.status(500).json({
-                success: false,
-                error: 'Failed to create ticket',
-                details: error.message
-            });
+            // Insert ticket with Razorpay payment info
+            const { data, error } = await supabase
+                .from('tickets')
+                .insert([
+                    {
+                        ticket_id,
+                        name: customer_name,
+                        phone: customer_phone,
+                        email: customer_email,
+                        ticket_type: ticket_type,
+                        price: pricePerTicket,
+                        screenshot_url: `razorpay://${razorpay_payment_id}`,
+                        utr_number: razorpay_order_id,
+                        status: 'VERIFIED'
+                    }
+                ])
+                .select()
+                .single();
+
+            if (error) {
+                console.error('DB Insert Error:', error);
+                return res.status(500).json({
+                    success: false,
+                    error: 'Failed to create ticket',
+                    details: error.message
+                });
+            }
+
+            tickets.push(data);
         }
 
-        console.log('Ticket created successfully:', data);
+        console.log(`${quantity} ticket(s) created successfully:`, tickets.map(t => t.ticket_id));
 
         res.json({
             success: true,
-            ticket: data,
-            message: 'Payment verified and ticket created successfully'
+            tickets: tickets,
+            // Also include single ticket for backwards compatibility
+            ticket: tickets[0],
+            message: `Payment verified and ${quantity} ticket(s) created successfully`
         });
     } catch (err: any) {
         console.error('Payment Verification Error:', err);
