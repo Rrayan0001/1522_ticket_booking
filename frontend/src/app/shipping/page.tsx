@@ -18,7 +18,7 @@ export default function ShippingPolicyPage() {
                                 Digital Tickets Only
                             </h2>
                             <p className="text-lg">
-                                1522 provides <strong>digital tickets only</strong>. We do not ship any physical products. All tickets are delivered electronically.
+                                Mathangi Entertainment LLP provides <strong>digital tickets only</strong>. We do not ship any physical products. All tickets are delivered electronically.
                             </p>
                         </div>
                     </section>
@@ -80,6 +80,10 @@ export default function ShippingPolicyPage() {
                         <div className="p-4 bg-white/5 border border-[#D4AF37]/20 rounded-lg">
                             <p><strong>Email:</strong> anaudioaffair@gmail.com</p>
                             <p><strong>Phone:</strong> +91 99864 93391</p>
+                            <p className="mt-2"><strong>Registered Address:</strong><br />
+                                Mathangi Entertainment LLP<br />
+                                NO 94 GROUND FLOOR GRACE 3RD MAIN 1ST BLOCK<br />
+                                R T NAGAR, BANGALORE, KARNATAKA 560032</p>
                         </div>
                     </section>
                 </div>

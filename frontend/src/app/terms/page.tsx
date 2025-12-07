@@ -17,7 +17,7 @@ export default function TermsPage() {
                             1. Acceptance of Terms
                         </h2>
                         <p>
-                            By accessing and using the 1522 ticket booking service, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these terms, please do not use our service.
+                            Welcome to An Audio Affair, operated by <strong>Mathangi Entertainment LLP</strong>. We are hosting events in association with <strong>1522, The Pub</strong>. By accessing and using our ticket booking service, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these terms, please do not use our service.
                         </p>
                     </section>
 
@@ -27,7 +27,7 @@ export default function TermsPage() {
                         </h2>
                         <ul className="list-disc list-inside space-y-2 ml-4">
                             <li>All ticket sales are final and non-refundable unless the event is cancelled.</li>
-                            <li>Tickets are non-transferable without prior authorization from 1522.</li>
+                            <li>Tickets are non-transferable without prior authorization from Mathangi Entertainment LLP.</li>
                             <li>You must be 18 years or older to purchase tickets.</li>
                             <li>Prices are subject to change without notice.</li>
                             <li>Payment must be made in full at the time of booking.</li>
@@ -40,7 +40,7 @@ export default function TermsPage() {
                         </h2>
                         <ul className="list-disc list-inside space-y-2 ml-4">
                             <li>Valid government-issued photo ID required for entry.</li>
-                            <li>Entry is at the discretion of venue management.</li>
+                            <li>Entry is at the discretion of venue management (1522, The Pub).</li>
                             <li>We reserve the right to refuse entry without refund.</li>
                             <li>Dress code must be adhered to as specified by the venue.</li>
                         </ul>
@@ -75,7 +75,7 @@ export default function TermsPage() {
                             6. Liability
                         </h2>
                         <p>
-                            1522 and its partners are not liable for any loss, injury, or damage to persons or property during the event. Attendees participate at their own risk.
+                            Mathangi Entertainment LLP and 1522, The Pub are not liable for any loss, injury, or damage to persons or property during the event. Attendees participate at their own risk.
                         </p>
                     </section>
 
@@ -98,7 +98,10 @@ export default function TermsPage() {
                         <div className="mt-3 p-4 bg-white/5 border border-[#D4AF37]/20 rounded-lg">
                             <p><strong>Email:</strong> anaudioaffair@gmail.com</p>
                             <p><strong>Phone:</strong> +91 99864 93391</p>
-                            <p><strong>Address:</strong> 1522, Sahakaranagar, Bangalore</p>
+                            <p className="mt-2"><strong>Registered Address:</strong><br />
+                                Mathangi Entertainment LLP<br />
+                                NO 94 GROUND FLOOR GRACE 3RD MAIN 1ST BLOCK<br />
+                                R T NAGAR, BANGALORE, KARNATAKA 560032</p>
                         </div>
                     </section>
                 </div>

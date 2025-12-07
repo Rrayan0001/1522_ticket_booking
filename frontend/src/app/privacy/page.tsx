@@ -80,6 +80,10 @@ export default function PrivacyPage() {
                         </p>
                         <div className="mt-3 p-4 bg-white/5 border border-[#D4AF37]/20 rounded-lg">
                             <p><strong>Email:</strong> anaudioaffair@gmail.com</p>
+                            <p className="mt-2"><strong>Registered Address:</strong><br />
+                                Mathangi Entertainment LLP<br />
+                                NO 94 GROUND FLOOR GRACE 3RD MAIN 1ST BLOCK<br />
+                                R T NAGAR, BANGALORE, KARNATAKA 560032</p>
                         </div>
                     </section>
                 </div>

@@ -1968,6 +1968,21 @@ const OrganizerView = ({ setView }: any) => (
                     SEND EMAIL
                 </a>
             </div>
+
+            <div className="bg-white/5 p-6 border border-[#D4AF37]/20 text-center">
+                <div className="w-16 h-16 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-4 text-[#D4AF37]">
+                    <MapPin size={32} />
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2">Registered Address</h3>
+                <p className="text-gray-400 text-sm mb-4">
+                    Mathangi Entertainment LLP<br />
+                    NO 94 GROUND FLOOR GRACE 3RD MAIN 1ST BLOCK<br />
+                    R T NAGAR, BANGALORE, KARNATAKA 560032
+                </p>
+                <div className="p-3 bg-white/5 border border-[#D4AF37]/10 text-xs text-gray-500 rounded">
+                    Event in association with 1522, The Pub
+                </div>
+            </div>
         </div>
     </div>
 );

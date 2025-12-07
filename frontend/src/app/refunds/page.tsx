@@ -17,7 +17,7 @@ export default function RefundPolicyPage() {
                             1. General Policy
                         </h2>
                         <p>
-                            All ticket purchases for events at 1522, The Pub are final. We understand that plans can change, and we have outlined our cancellation and refund policies below.
+                            All ticket purchases for events organized by Mathangi Entertainment LLP at 1522, The Pub are final. We understand that plans can change, and we have outlined our cancellation and refund policies below.
                         </p>
                     </section>
 
@@ -29,7 +29,7 @@ export default function RefundPolicyPage() {
                             <p className="text-green-400 font-semibold">✓ Full Refund Applicable</p>
                         </div>
                         <ul className="list-disc list-inside space-y-2 ml-4">
-                            <li>If an event is cancelled by 1522 or the event organizer, you will receive a <strong>full refund</strong>.</li>
+                            <li>If an event is cancelled by 1522, Mathangi Entertainment LLP, or the event organizer, you will receive a <strong>full refund</strong>.</li>
                             <li>Refunds will be processed within <strong>7-10 business days</strong> to the original payment method.</li>
                             <li>You will be notified via email and SMS about the cancellation and refund status.</li>
                         </ul>
@@ -92,6 +92,10 @@ export default function RefundPolicyPage() {
                         <div className="p-4 bg-white/5 border border-[#D4AF37]/20 rounded-lg">
                             <p><strong>Email:</strong> anaudioaffair@gmail.com</p>
                             <p><strong>Phone:</strong> +91 99864 93391</p>
+                            <p className="mt-2"><strong>Registered Address:</strong><br />
+                                Mathangi Entertainment LLP<br />
+                                NO 94 GROUND FLOOR GRACE 3RD MAIN 1ST BLOCK<br />
+                                R T NAGAR, BANGALORE, KARNATAKA 560032</p>
                             <p className="mt-2 text-sm text-gray-400">Include your booking ID, ticket number, and reason for refund request.</p>
                         </div>
                     </section>
