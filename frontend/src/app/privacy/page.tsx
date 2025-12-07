@@ -79,18 +79,9 @@ export default function PrivacyPage() {
                             For privacy-related inquiries, contact us at:
                         </p>
                         <div className="mt-3 p-4 bg-white/5 border border-[#D4AF37]/20 rounded-lg">
-                            <p><strong>Email:</strong> privacy@1522thepub.com</p>
+                            <p><strong>Email:</strong> psriniva1@gmail.com</p>
                         </div>
                     </section>
-                </div>
-
-                <div className="mt-12 pt-8 border-t border-[#D4AF37]/20">
-                    <a
-                        href="/"
-                        className="inline-block px-8 py-3 bg-gradient-to-r from-[#D4AF37] to-[#FADA5E] text-black font-bold tracking-widest hover:shadow-lg transition-all"
-                    >
-                        BACK TO HOME
-                    </a>
                 </div>
             </div>
         </div>

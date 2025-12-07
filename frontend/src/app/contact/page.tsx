@@ -37,7 +37,7 @@ export default function ContactPage() {
                         </div>
                         <h3 className="text-xl font-bold text-white mb-2 font-playfair">Call Us</h3>
                         <p className="text-gray-400">
-                            +91 98765 43210<br />
+                            +91 99864 93391<br />
                             <span className="text-sm">Mon - Sun: 12 PM - 12 AM</span>
                         </p>
                     </div>
@@ -52,7 +52,7 @@ export default function ContactPage() {
                         </div>
                         <h3 className="text-xl font-bold text-white mb-2 font-playfair">Email Us</h3>
                         <p className="text-gray-400">
-                            support@1522thepub.com<br />
+                            psriniva1@gmail.com<br />
                             <span className="text-sm">We reply within 24 hours</span>
                         </p>
                     </div>
@@ -67,8 +67,8 @@ export default function ContactPage() {
                             </svg>
                         </div>
                         <h3 className="text-xl font-bold text-white mb-2 font-playfair">Follow Us</h3>
-                        <a href="https://instagram.com/1522thepub" target="_blank" rel="noopener noreferrer" className="text-[#C21E56] hover:underline">
-                            @1522thepub
+                        <a href="https://www.instagram.com/anaudioaffair/" target="_blank" rel="noopener noreferrer" className="text-[#C21E56] hover:underline">
+                            @anaudioaffair
                         </a>
                     </div>
                 </div>
@@ -82,14 +82,6 @@ export default function ContactPage() {
                     </div>
                 </div>
 
-                <div className="mt-12 pt-8 border-t border-[#D4AF37]/20">
-                    <a
-                        href="/"
-                        className="inline-block px-8 py-3 bg-gradient-to-r from-[#D4AF37] to-[#FADA5E] text-black font-bold tracking-widest hover:shadow-lg transition-all"
-                    >
-                        BACK TO HOME
-                    </a>
-                </div>
             </div>
         </div>
     );

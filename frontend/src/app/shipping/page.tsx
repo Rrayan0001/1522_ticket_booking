@@ -78,19 +78,10 @@ export default function ShippingPolicyPage() {
                         </h2>
                         <p className="mb-3">If you're having trouble accessing your digital ticket, contact us:</p>
                         <div className="p-4 bg-white/5 border border-[#D4AF37]/20 rounded-lg">
-                            <p><strong>Email:</strong> support@1522thepub.com</p>
-                            <p><strong>Phone:</strong> +91 98765 43210</p>
+                            <p><strong>Email:</strong> psriniva1@gmail.com</p>
+                            <p><strong>Phone:</strong> +91 99864 93391</p>
                         </div>
                     </section>
-                </div>
-
-                <div className="mt-12 pt-8 border-t border-[#D4AF37]/20">
-                    <a
-                        href="/"
-                        className="inline-block px-8 py-3 bg-gradient-to-r from-[#D4AF37] to-[#FADA5E] text-black font-bold tracking-widest hover:shadow-lg transition-all"
-                    >
-                        BACK TO HOME
-                    </a>
                 </div>
             </div>
         </div>

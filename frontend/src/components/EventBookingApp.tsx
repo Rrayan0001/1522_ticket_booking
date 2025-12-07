@@ -1890,7 +1890,7 @@ const OrganizerView = ({ setView }: any) => (
                 </div>
                 <h3 className="text-white font-bold text-lg mb-2">Email Us</h3>
                 <p className="text-gray-400 text-sm mb-6">Send us your queries and we'll get back to you.</p>
-                <a href="mailto:support@1522.in" className="btn-gold w-full py-3 block">
+                <a href="mailto:psriniva1@gmail.com" className="btn-gold w-full py-3 block">
                     SEND EMAIL
                 </a>
             </div>
